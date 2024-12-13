@@ -1,5 +1,0 @@
-4.1.0
-
-Added html tags and attributes
-Added svg tags and attributes
-Fixed bug with tag moving
