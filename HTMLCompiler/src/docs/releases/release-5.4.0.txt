@@ -1,3 +1,0 @@
-5.4.0
-
-Added support for google closure compiler JS compression

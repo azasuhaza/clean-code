@@ -1,4 +1,0 @@
-5.3.0
-
-Added error reporter for Javascript errors
-Updated staging plugin version for Mavencentral

@@ -1,4 +1,0 @@
-5.5.4
-
-Added caching of compressed javascript
-Added removing CR characters from style text

@@ -1,3 +1,0 @@
-5.4.1
-
-Added additional dependencies for google closure compiler
