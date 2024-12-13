@@ -1,3 +1,0 @@
-   * Access Manager - http://www.accessmanager.co.uk/
-   * Password Safe - http://passwordsafe.sourceforge.net (From the creator of Blowfish)
-   * MyPasswordSafe - http://www.semanticgap.com/myps/ (Qt version that's compatible with Password Safe)
