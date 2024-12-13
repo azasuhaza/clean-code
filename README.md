@@ -1,4 +1,3 @@
 # clean-code
 
-1. mvn project that contain clean codes
-2. springboot project
+4 repositories that I took from github, that I'll do cleanup
