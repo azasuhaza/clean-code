@@ -1,4 +1,0 @@
-5.7.6
-
-Removed debug logging
-Updated examples to latest version

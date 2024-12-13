@@ -1,1 +1,0 @@
-class Greeter { greeting: string; }
