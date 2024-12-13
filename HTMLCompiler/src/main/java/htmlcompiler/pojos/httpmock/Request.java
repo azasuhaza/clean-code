@@ -25,7 +25,7 @@ public final class Request {
     }
 
     public static HttpHandler toHttpHandler(final Request request, final Path... directories) {
-        if (request.statusCode == 604) { // 604 is 2 times a 302, we want to send the file at Location
+    	if(request.isNotAvailable(request)) {
             final var location = toLocationHeader(request);
             if (location == null) return HttpHandlers::send404;
             return exchange -> {
@@ -52,7 +52,14 @@ public final class Request {
         };
     }
 
-    private static Header toLocationHeader(final Request request) {
+    private boolean isNotAvailable(Request request) {
+    	if (request.statusCode == 604) 
+    		return true;
+    	else
+    		return false;
+	}
+
+	private static Header toLocationHeader(final Request request) {
         for (final var header : request.headers)
             if ("Location".equalsIgnoreCase(header.name))
                 return header;
