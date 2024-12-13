@@ -1,4 +1,0 @@
-2.7.0
-
-- Fixed pretty printing bug with maps
-- Extracted the builder functions into a separate builder class
