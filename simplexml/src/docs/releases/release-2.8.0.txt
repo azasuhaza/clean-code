@@ -1,3 +1,0 @@
-2.8.0
-
-Added HTML unescaping as an option
