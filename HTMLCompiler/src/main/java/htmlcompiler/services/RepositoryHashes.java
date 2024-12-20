@@ -10,11 +10,11 @@ import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 
-import static htmlcompiler.services.Repository.getRepositoryDirectory;
-import static htmlcompiler.utils.Coding.encodeBase64;
-import static htmlcompiler.utils.Coding.sha384;
-import static htmlcompiler.utils.HTTP.urlHasCorsAllowed;
-import static htmlcompiler.utils.HTTP.urlToByteArray;
+import htmlcompiler.services.Repository;
+import htmlcompiler.utils.Coding;
+import htmlcompiler.utils.Coding;
+import htmlcompiler.utils.HTTP;
+import htmlcompiler.utils.HTTP;
 import static htmlcompiler.utils.Json.GSON;
 import static java.nio.file.Files.*;
 
@@ -25,19 +25,19 @@ public enum RepositoryHashes {;
 
     public static String uriToIntegrityValue(final String uri, final boolean force, final Logger log) throws IOException, NoSuchAlgorithmException {
         if (cachedIntegrityValues == null) {
-            locationCachedIntegrityValues = getRepositoryDirectory().resolve("uri-to-integrity.json");
+            locationCachedIntegrityValues = Repository.getRepositoryDirectory().resolve("uri-to-integrity.json");
             cachedIntegrityValues = readHashMap(locationCachedIntegrityValues);
         }
         String integrity = cachedIntegrityValues.get(uri);
         if (integrity != null) return integrity;
 
-        if (!urlHasCorsAllowed(uri)) {
+        if (!HTTP.urlHasCorsAllowed(uri)) {
             final var message = "URI " + uri + " does not have * in Access-Control-Allow-Origin header. Consider loading this resource from a different URI or adding the 'no-integrity' attribute to the tag";
             if (force) log.warn(message);
             else throw new IOException(message);
         }
 
-        integrity = toIntegrityValue(urlToByteArray(uri));
+        integrity = toIntegrityValue(HTTP.urlToByteArray(uri));
         cachedIntegrityValues.put(uri, integrity);
         writeHashMap(cachedIntegrityValues, locationCachedIntegrityValues);
 
@@ -59,7 +59,7 @@ public enum RepositoryHashes {;
     }
 
     private static String toIntegrityValue(final byte[] data) throws NoSuchAlgorithmException {
-        return "sha384-"+encodeBase64(sha384(data));
+        return "sha384-"+ Coding.encodeBase64(Coding.sha384(data));
     }
 
 }

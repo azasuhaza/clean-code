@@ -13,13 +13,13 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import static htmlcompiler.compilers.CodeCompiler.newExternalToolCompiler;
-import static htmlcompiler.utils.Logger.newVaadinLogger;
+import htmlcompiler.compilers.CodeCompiler;
+import htmlcompiler.utils.Logger;
 
 public enum CssCompiler {;
 
     public static CodeCompiler newStylusCompiler() {
-        return newExternalToolCompiler("stylus", ".styl", true, ".css",
+        return CodeCompiler.newExternalToolCompiler("stylus", ".styl", true, ".css",
             (outputFile, inputFile) -> inputFile.toAbsolutePath().toString() + " -o " + outputFile.toAbsolutePath());
     }
 
@@ -56,12 +56,12 @@ public enum CssCompiler {;
     }
 
     public static CodeCompiler newToolScssCompiler() {
-        return newExternalToolCompiler("sass", ".scss", true, ".css",
+        return CodeCompiler.newExternalToolCompiler("sass", ".scss", true, ".css",
             (outputFile, inputFile) -> "--no-source-map " + inputFile.toAbsolutePath() + " " + outputFile.toAbsolutePath());
     }
 
     public static CodeCompiler newInternalScssCompiler(final Logger logger) {
-        final var errorHandler = newVaadinLogger(logger);
+        final var errorHandler = Logger.newVaadinLogger(logger);
         return new CodeCompiler() {
             public String compileCode(final String code, final Path parent) throws Exception {
                 return toCssCode(toCompiledStylesheet(code));

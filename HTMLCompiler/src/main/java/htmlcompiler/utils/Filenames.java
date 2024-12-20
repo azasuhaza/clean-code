@@ -3,7 +3,7 @@ package htmlcompiler.utils;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static java.nio.file.Files.isRegularFile;
+import java.nio.file.Files;
 
 public enum Filenames {;
 
@@ -16,7 +16,7 @@ public enum Filenames {;
     }
 
     public static String toExtension(final Path file, final String _default) {
-        if (file == null || !isRegularFile(file)) return _default;
+        if (file == null || !Files.isRegularFile(file)) return _default;
         final String name = file.getFileName().toString();
         if (name.isEmpty()) return _default;
         final int index = name.lastIndexOf('.');

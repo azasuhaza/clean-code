@@ -1,6 +1,6 @@
 package htmlcompiler.minify;
 
-import static htmlcompiler.utils.HTML.HTML_COMPRESSOR;
+import htmlcompiler.utils.HTML;
 
 public enum HtmlMinifyEngine {
 
@@ -8,7 +8,7 @@ public enum HtmlMinifyEngine {
 
     public Minifier toMinifier() {
         return switch (this) {
-            case hazendaz -> HTML_COMPRESSOR::compress;
+            case hazendaz -> HTML.HTML_COMPRESSOR::compress;
         };
     }
 

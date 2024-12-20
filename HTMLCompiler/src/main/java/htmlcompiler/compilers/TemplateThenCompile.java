@@ -10,13 +10,13 @@ import java.nio.file.Path;
 import java.util.EnumSet;
 import java.util.Map;
 
-import static htmlcompiler.compilers.FileCompiler.newFileCompilerMap;
-import static htmlcompiler.utils.Filenames.toExtension;
-import static java.lang.Integer.MAX_VALUE;
-import static java.nio.file.FileVisitResult.CONTINUE;
-import static java.nio.file.Files.isRegularFile;
-import static java.nio.file.StandardOpenOption.CREATE;
-import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
+import htmlcompiler.compilers.FileCompiler;
+import htmlcompiler.utils.Filenames;
+import java.lang.Integer;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.StandardOpenOption;
+
 
 public interface TemplateThenCompile {
 
@@ -25,19 +25,19 @@ public interface TemplateThenCompile {
     public static TemplateThenCompile newTemplateThenCompile(final Logger logger, final Path inputDir
             , final Path outputDir, final boolean replaceExtension, final Map<String, String> variables
             , final HtmlCompiler html) {
-        final var compilers = newFileCompilerMap(logger, html, variables);
+        final var compilers = FileCompiler.newFileCompilerMap(logger, html, variables);
 
         return inFile -> {
-            if (inFile == null || !isRegularFile(inFile)) return;
+            if (inFile == null || !Files.isRegularFile(inFile)) return;
 
-            final String extension = toExtension(inFile, null);
+            final String extension = Filenames.toExtension(inFile, null);
             if (extension == null) return;
             final var compiler = compilers.get(extension);
             if (compiler == null) return;
 
             final String output = compiler.compile(inFile);
             final Path outputFile = renameFile(inFile, inputDir, outputDir, replaceExtension, compiler.outputExtension());
-            Files.writeString(outputFile, output, CREATE, TRUNCATE_EXISTING);
+            Files.writeString(outputFile, output, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
         };
     }
 
@@ -53,14 +53,14 @@ public interface TemplateThenCompile {
     }
 
     public static void compileDirectories(final Path inputDir, final TemplateThenCompile ttc, final boolean recursive) throws IOException {
-        final int maxDepth = recursive ? MAX_VALUE : 1;
+        final int maxDepth = recursive ? Integer.MAX_VALUE : 1;
         Files.walkFileTree(inputDir, EnumSet.noneOf(FileVisitOption.class), maxDepth, (OnlyFileVisitor) (file, attrs) -> {
             try {
                 ttc.compileTemplate(file);
             } catch (Exception e) {
                 throw new IOException("Exception occurred while parsing " + inputDir.relativize(file), e);
             }
-            return CONTINUE;
+            return FileVisitResult.CONTINUE;
         });
     }
 

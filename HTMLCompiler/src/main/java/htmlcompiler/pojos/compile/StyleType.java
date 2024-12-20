@@ -6,16 +6,16 @@ import org.w3c.dom.Element;
 
 import java.nio.file.Path;
 
-import static htmlcompiler.compilers.CodeCompiler.newNopCompiler;
+import htmlcompiler.compilers.CodeCompiler;
 import static htmlcompiler.compilers.CssCompiler.*;
-import static htmlcompiler.utils.Logger.newConsoleLogger;
+import htmlcompiler.utils.Logger;
 
 public enum StyleType {
-    minified_css(newNopCompiler()),
-    css(newNopCompiler()),
+    minified_css(CodeCompiler.newNopCompiler()),
+    css(CodeCompiler.newNopCompiler()),
     less(newLessCompiler()),
     // FIXME should use the maven logger somehow
-    scss(newScssCompiler(newConsoleLogger())),
+    scss(newScssCompiler(Logger.newConsoleLogger())),
     stylus(newStylusCompiler());
 
     private final CodeCompiler compiler;

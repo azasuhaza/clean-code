@@ -21,21 +21,19 @@ import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import static htmlcompiler.compilers.TemplateThenCompile.newTemplateThenCompile;
-import static htmlcompiler.minify.JsMinifyEngine.gcc_simple;
-import static htmlcompiler.pojos.compile.CompilerConfig.readChecksConfiguration;
-import static htmlcompiler.services.DirectoryWatcher.newDirectoryWatcher;
-import static htmlcompiler.services.Http.newHttpServer;
-import static htmlcompiler.utils.Filenames.toRelativePath;
-import static htmlcompiler.utils.Logger.YYYY_MM_DD_HH_MM_SS;
-import static htmlcompiler.utils.Strings.isNullOrEmpty;
-import static java.lang.String.format;
-import static java.nio.file.Files.isRegularFile;
-import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
-import static java.nio.file.StandardWatchEventKinds.ENTRY_DELETE;
-import static java.util.Collections.emptyList;
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toSet;
+import htmlcompiler.compilers.TemplateThenCompile;
+import htmlcompiler.minify.JsMinifyEngine;
+import htmlcompiler.pojos.compile.CompilerConfig;
+import htmlcompiler.services.DirectoryWatcher;
+import htmlcompiler.services.Http;
+import htmlcompiler.utils.Filenames;
+import htmlcompiler.utils.Logger;
+import htmlcompiler.utils.Strings;
+import java.lang.String;
+import java.nio.file.Files;
+import java.nio.file.StandardWatchEventKinds;
+import java.util.Collections;
+import java.util.stream.Collectors;
 
 public enum Host {;
 
@@ -61,23 +59,23 @@ public enum Host {;
         public boolean cacheJsCompression;
 
         public JsMinifyEngine getJsCompressorType() {
-            if (isNullOrEmpty(jsCompressorType)) return gcc_simple;
+            if (Strings.isNullOrEmpty(jsCompressorType)) return JsMinifyEngine.gcc_simple;
             return JsMinifyEngine.valueOf(jsCompressorType.replace('-', '_'));
         }
     }
 
     public static void executeHost(final Logger log, final HostCommandConfig config) throws IOException, InterruptedException {
         final var libs = new LibraryArchive();
-        final var checksSettings = readChecksConfiguration(config.validation);
+        final var checksSettings = CompilerConfig.readChecksConfiguration(config.validation);
         final var html = new HtmlCompiler(log, config.getJsCompressorType(), libs, checksSettings, config.checksEnabled,
                 config.compressionEnabled, config.deprecatedTagsEnabled, config.htmlCompressionEnabled,
                 config.cssCompressionEnabled, config.jsCompressionEnabled, config.cacheJsCompression);
-        final var ttc = newTemplateThenCompile(log, config.inputDir, config.outputDir, config.replaceExtension, config.variables, html);
+        final var ttc = TemplateThenCompile.newTemplateThenCompile(log, config.inputDir, config.outputDir, config.replaceExtension, config.variables, html);
         final var queue = new LinkedBlockingQueue<Task>();
 
-        final var server = newHttpServer(config.port, config.requestApiEnabled, config.requestApiSpecification, config.hostedPaths);
+        final var server = Http.newHttpServer(config.port, config.requestApiEnabled, config.requestApiSpecification, config.hostedPaths);
         final var compiler = newTaskCompiler(log, config.inputDir, queue, ttc, toChildrenSet(config.inputDir));
-        final var watcher = newDirectoryWatcher()
+        final var watcher = DirectoryWatcher.newDirectoryWatcher()
                 .directory(config.inputDir)
                 .directories(toPathList(config.watchedDirectories))
                 .listener((event, path) -> queue.add(new Task(event, path)))
@@ -88,9 +86,9 @@ public enum Host {;
         watcher.start();
 
         log.info("Listening on localhost:" + config.port);
-        log.info(format
+        log.info(String.format
             ( "[%s] Compiling supported template formats in %s to %s"
-            , LocalDateTime.now().format(YYYY_MM_DD_HH_MM_SS)
+            , LocalDateTime.now().format(Logger.YYYY_MM_DD_HH_MM_SS)
             , config.baseDir.relativize(config.inputDir)
             , config.baseDir.relativize(config.outputDir)
             ));
@@ -102,14 +100,14 @@ public enum Host {;
         return new LoopingSingleThread(() -> {
             final Task take = queue.take();
             if (take.path == null) return;
-            if (!isRegularFile(take.path)) return;
-            if (take.type == ENTRY_DELETE) return;
-            if (take.type == ENTRY_CREATE) return;
+            if (!Files.isRegularFile(take.path)) return;
+            if (take.type == StandardWatchEventKinds.ENTRY_DELETE) return;
+            if (take.type == StandardWatchEventKinds.ENTRY_CREATE) return;
 
             try {
                 final boolean isKnownTemplate = rootPages.contains(take.path.normalize().toAbsolutePath());
                 if (isKnownTemplate) {
-                    log.warn(toRelativePath(take.path), false);
+                    log.warn(Filenames.toRelativePath(take.path), false);
                     ttc.compileTemplate(take.path);
                     log.warn("... done");
                 } else {
@@ -119,7 +117,7 @@ public enum Host {;
                     queue.clear();
                     log.warn("Compiling all files in root");
                     for (final var path : rootPages) {
-                        log.warn(toRelativePath(path), false);
+                        log.warn(Filenames.toRelativePath(path), false);
                         ttc.compileTemplate(path);
                         log.warn("... done");
                     }
@@ -136,18 +134,18 @@ public enum Host {;
     }
 
     private static List<Path> toPathList(final String semicolonSeparatedList) {
-        if (semicolonSeparatedList == null || semicolonSeparatedList.isEmpty()) return emptyList();
+        if (semicolonSeparatedList == null || semicolonSeparatedList.isEmpty()) return Collections.emptyList();
 
         return Arrays.stream(semicolonSeparatedList.split(";"))
             .map(path -> Paths.get(path))
-            .collect(toList());
+            .collect(Collectors.toList());
     }
 
     private static Set<Path> toChildrenSet(final Path inputDir) throws IOException {
         return Files.list(inputDir)
             .map(Path::normalize)
             .map(Path::toAbsolutePath)
-            .collect(toSet());
+            .collect(Collectors.toSet());
     }
 
 }

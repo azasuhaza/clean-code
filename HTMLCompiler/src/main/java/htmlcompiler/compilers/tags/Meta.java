@@ -8,8 +8,8 @@ import htmlcompiler.pojos.library.LibraryDescription;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
-import static htmlcompiler.compilers.tags.TagParsing.*;
-import static htmlcompiler.compilers.tags.TagParsing.replaceWith;
+import static htmlcompiler.compilers.tags.TagAnalyzer.*;
+import static htmlcompiler.compilers.tags.TagAnalyzer.replaceWith;
 import static xmlparser.utils.Functions.isNullOrEmpty;
 
 public enum Meta {;

@@ -7,7 +7,7 @@ import htmlcompiler.pojos.library.LibraryArchive;
 import htmlcompiler.pojos.library.LibraryDescription;
 import org.jsoup.nodes.Element;
 
-import static htmlcompiler.compilers.tags.TagParsing.replaceWith;
+import static htmlcompiler.compilers.tags.TagAnalyzer.replaceWith;
 import static xmlparser.utils.Functions.isNullOrEmpty;
 
 public enum Library {;

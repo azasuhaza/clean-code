@@ -8,7 +8,7 @@ import java.nio.file.Path;
 import java.util.List;
 
 import static htmlcompiler.services.HttpHandlers.*;
-import static java.nio.charset.StandardCharsets.UTF_8;
+import java.nio.charset.StandardCharsets;
 
 public final class Request {
 
@@ -43,7 +43,7 @@ public final class Request {
                 if ("Content-Length".equalsIgnoreCase(header.name)) continue;
                 responseHeaders.add(header.name, header.value);
             }
-            final byte[] bodyBytes = request.body.getBytes(UTF_8);
+            final byte[] bodyBytes = request.body.getBytes(StandardCharsets.UTF_8);
             final int bodyLength = bodyBytes.length == 0 ? -1 : bodyBytes.length;
 
             exchange.sendResponseHeaders(request.statusCode, bodyLength);

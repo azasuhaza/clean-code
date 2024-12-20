@@ -8,10 +8,10 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
-import static htmlcompiler.utils.App.buildMavenTask;
-import static org.apache.maven.plugins.annotations.LifecyclePhase.GENERATE_RESOURCES;
+import htmlcompiler.utils.App;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
 
-@Mojo( defaultPhase = GENERATE_RESOURCES, name = "compile" )
+@Mojo( defaultPhase = LifecyclePhase.GENERATE_RESOURCES, name = "compile" )
 public final class MavenCompile extends AbstractMojo {
 
     @Parameter(defaultValue = "${project}", readonly = true)
@@ -30,7 +30,7 @@ public final class MavenCompile extends AbstractMojo {
 
     public void execute() throws MojoFailureException {
         if (!enabled) return;
-        buildMavenTask(this, log -> Compile.executeCompile(log, newCompileConfig()));
+        App.buildMavenTask(this, log -> Compile.executeCompile(log, newCompileConfig()));
     }
 
     private CompileCommandConfig newCompileConfig() throws MojoFailureException {

@@ -1,7 +1,9 @@
 package htmlcompiler.commands;
 
 import htmlcompiler.compilers.HtmlCompiler;
+import htmlcompiler.compilers.TemplateThenCompile;
 import htmlcompiler.minify.JsMinifyEngine;
+import htmlcompiler.pojos.compile.CompilerConfig;
 import htmlcompiler.pojos.library.LibraryArchive;
 import htmlcompiler.utils.Logger;
 
@@ -9,10 +11,6 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Map;
 
-import static htmlcompiler.compilers.TemplateThenCompile.compileDirectories;
-import static htmlcompiler.compilers.TemplateThenCompile.newTemplateThenCompile;
-import static htmlcompiler.minify.JsMinifyEngine.gcc_simple;
-import static htmlcompiler.pojos.compile.CompilerConfig.readChecksConfiguration;
 import static htmlcompiler.utils.Strings.isNullOrEmpty;
 
 public enum Compile {;
@@ -35,20 +33,20 @@ public enum Compile {;
         public boolean cacheJsCompression = true;
 
         public JsMinifyEngine getJsCompressorType() {
-            if (isNullOrEmpty(jsCompressorType)) return gcc_simple;
+            if (isNullOrEmpty(jsCompressorType)) return JsMinifyEngine.gcc_simple;
             return JsMinifyEngine.valueOf(jsCompressorType.replace('-', '_'));
         }
     }
 
     public static void executeCompile(final Logger log, final CompileCommandConfig config) throws IOException {
         final var libs = new LibraryArchive();
-        final var checksSettings = readChecksConfiguration(config.validation);
+        final var checksSettings = CompilerConfig.readChecksConfiguration(config.validation);
         final var html = new HtmlCompiler(log, config.getJsCompressorType(), libs, checksSettings, config.checksEnabled,
                 config.compressionEnabled, config.deprecatedTagsEnabled, config.htmlCompressionEnabled,
                 config.cssCompressionEnabled, config.jsCompressionEnabled, config.cacheJsCompression);
-        final var ttc = newTemplateThenCompile(log, config.inputDir, config.outputDir, config.replaceExtension, config.variables, html);
+        final var ttc = TemplateThenCompile.newTemplateThenCompile(log, config.inputDir, config.outputDir, config.replaceExtension, config.variables, html);
 
-        compileDirectories(config.inputDir, ttc, config.recursive);
+        TemplateThenCompile.compileDirectories(config.inputDir, ttc, config.recursive);
     }
 
 }

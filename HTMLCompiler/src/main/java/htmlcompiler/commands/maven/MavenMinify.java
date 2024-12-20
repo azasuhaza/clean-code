@@ -17,12 +17,11 @@ import java.nio.file.Paths;
 import java.util.Set;
 import java.util.function.Consumer;
 
-import static htmlcompiler.utils.App.buildMavenTask;
+import htmlcompiler.utils.App;
 import static java.nio.file.Files.*;
-import static java.nio.file.Files.isDirectory;
-import static org.apache.maven.plugins.annotations.LifecyclePhase.PREPARE_PACKAGE;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
 
-@Mojo(defaultPhase = PREPARE_PACKAGE, name = "minify")
+@Mojo(defaultPhase = LifecyclePhase.PREPARE_PACKAGE, name = "minify")
 public final class MavenMinify extends AbstractMojo {
 
     @Parameter(defaultValue = "${project}", readonly = true)
@@ -48,7 +47,7 @@ public final class MavenMinify extends AbstractMojo {
     public void execute() throws MojoFailureException {
         if (!enabled) return;
 
-        buildMavenTask(this, log -> {
+        	App.buildMavenTask(this, log -> {
             log.info("HtmlCompiler minify command starting");
 
             final var htmlMinifier = htmlMinifyEngine.toMinifier();
@@ -56,7 +55,7 @@ public final class MavenMinify extends AbstractMojo {
             final var jsMinifier = jsMinifyEngine.toMinifier(log);
 
             final var outputDir = getTargetDirectory(project, targetDir);
-            if (!isDirectory(outputDir)) {
+            if (!Files.isDirectory(outputDir)) {
                 log.warn("Minify target " + outputDir + " directory does not exist.");
                 return;
             }
@@ -76,7 +75,7 @@ public final class MavenMinify extends AbstractMojo {
 
             if (directories != null) for (final var dir : directories) {
                 final var path = outputDir.resolve(dir);
-                if (!isDirectory(path)) {
+                if (!Files.isDirectory(path)) {
                     log.warn("Directory " + dir + " could not be found");
                     continue;
                 }

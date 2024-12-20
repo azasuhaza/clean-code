@@ -16,16 +16,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static htmlcompiler.pojos.httpmock.Endpoint.toKey;
-import static htmlcompiler.pojos.httpmock.Request.toHttpHandler;
-import static htmlcompiler.services.HttpHandlers.pathHandler;
-import static xmlparser.utils.Functions.isNullOrEmpty;
+import htmlcompiler.pojos.httpmock.Endpoint;
+import htmlcompiler.pojos.httpmock.Request;
+import htmlcompiler.services.HttpHandlers;
+import xmlparser.utils.Functions;
 
 public enum Http {;
 
     public static HttpServer newHttpServer(final int port, final boolean requestApiEnabled
             , final String requestApiSpecification, final Path... pathsToHost) throws IOException {
-        HttpHandler handler = pathHandler(pathsToHost);
+        HttpHandler handler = HttpHandlers.pathHandler(pathsToHost);
         if (requestApiEnabled) {
             handler = fakeApiHandler(toApiMap(fileToSpec(requestApiSpecification), pathsToHost), handler);
         }
@@ -47,7 +47,7 @@ public enum Http {;
         for (final var entry : requests.entrySet()) {
             final var handlers = new HashMap<Endpoint, HttpHandler>();
             for (final Request spec : entry.getValue()) {
-                handlers.put(spec.endpoint, toHttpHandler(spec, pathsToHost));
+                handlers.put(spec.endpoint, Request.toHttpHandler(spec, pathsToHost));
             }
             api.put(entry.getKey(), handlers);
         }
@@ -55,12 +55,12 @@ public enum Http {;
     }
 
     private static HttpHandler fakeApiHandler(final Map<String, Map<Endpoint, HttpHandler>> api, final HttpHandler next) {
-        return exchange -> api.get(toVirtualHost(exchange)).getOrDefault(toKey(exchange), next).handle(exchange);
+        return exchange -> api.get(toVirtualHost(exchange)).getOrDefault(Endpoint.toKey(exchange), next).handle(exchange);
     }
 
     private static String toVirtualHost(final HttpExchange exchange) {
         final String host = exchange.getRequestHeaders().getFirst("Host");
-        if (isNullOrEmpty(host)) return "";
+        if (Functions.isNullOrEmpty(host)) return "";
         int colonIndex = host.indexOf(':');
         if (colonIndex == -1) return host;
         return host.substring(0, colonIndex);

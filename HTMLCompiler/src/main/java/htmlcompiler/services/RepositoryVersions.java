@@ -20,13 +20,13 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static htmlcompiler.utils.Filenames.toRelativePath;
+import htmlcompiler.utils.Filenames;
 import static htmlcompiler.utils.Json.GSON;
 import static java.nio.file.Files.*;
-import static java.nio.file.StandardOpenOption.CREATE;
-import static java.util.concurrent.TimeUnit.DAYS;
-import static java.util.stream.Collectors.toList;
-import static xmlparser.utils.Functions.isNullOrEmpty;
+import java.nio.file.StandardOpenOption.CREATE;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+import xmlparser.utils.Functions;
 
 public enum RepositoryVersions {;
 
@@ -46,8 +46,8 @@ public enum RepositoryVersions {;
                     , findNewerPatch(libraryVersion, allVersions)
                     );
 
-                if (!isNullOrEmpty(message)) {
-                    log.warn(String.format("File %s uses outdated library %s:%s; %s", toRelativePath(fileName), libraryName, libraryVersion.original, message));
+                if (!Functions.isNullOrEmpty(message)) {
+                    log.warn(String.format("File %s uses outdated library %s:%s; %s", Filenames.toRelativePath(fileName), libraryName, libraryVersion.original, message));
                 }
             } catch (ConnectException e) {
                 log.warn("Connect error while downloading version list for library " + url);
@@ -90,7 +90,7 @@ public enum RepositoryVersions {;
 
         final var list = downloadListVersions(library);
         createDirectories(cache.getParent());
-        writeString(cache, GSON.toJson(list), CREATE);
+        writeString(cache, GSON.toJson(list), StandardOpenOption.CREATE);
         return list;
     }
 
@@ -103,7 +103,7 @@ public enum RepositoryVersions {;
     }
 
     private static long oneWeekAgo() {
-        return System.currentTimeMillis() - DAYS.toMillis(1);
+        return System.currentTimeMillis() - TimeUnit.DAYS.toMillis(1);
     }
 
     private static final String URI_CDN_JS_VERSIONS = "https://api.cdnjs.com/libraries/%s?fields=versions";
@@ -113,7 +113,7 @@ public enum RepositoryVersions {;
                 .build();
         final var response = HTTP.HTTP.send(request, HttpResponse.BodyHandlers.ofString());
         return GSON.fromJson(response.body(), CdnJsResponse.class).versions
-                .stream().map(Version::new).collect(toList());
+                .stream().map(Version::new).collect(Collectors.toList());
     }
 
 }

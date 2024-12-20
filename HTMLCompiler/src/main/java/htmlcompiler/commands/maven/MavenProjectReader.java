@@ -9,32 +9,31 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import static java.nio.file.Files.exists;
-import static java.nio.file.Files.isDirectory;
+import java.nio.file.Files;
 
 public enum MavenProjectReader {;
 
     public static Path toInputDirectory(final MavenProject project) throws MojoFailureException {
         final Path inputDir = project.getBasedir().toPath().resolve("src").resolve("main").resolve("websrc");
-        if (!exists(inputDir)) throw new MojoFailureException("Input directory must exist: " + inputDir);
-        if (!isDirectory(inputDir)) throw new MojoFailureException("Input directory must be a directory");
+        if (!Files.exists(inputDir)) throw new MojoFailureException("Input directory must exist: " + inputDir);
+        if (!Files.isDirectory(inputDir)) throw new MojoFailureException("Input directory must be a directory");
         return inputDir;
     }
 
     public static Path toOutputDirectory(final String subdir, final MavenProject project) throws MojoFailureException {
         final Path outputDir = Paths.get(project.getBuild().getOutputDirectory()).resolve(subdir);
         outputDir.toFile().mkdirs();
-        if (!exists(outputDir)) throw new MojoFailureException("Output directory must exist: " + outputDir);
-        if (!isDirectory(outputDir)) throw new MojoFailureException("Output directory must be a directory");
+        if (!Files.exists(outputDir)) throw new MojoFailureException("Output directory must exist: " + outputDir);
+        if (!Files.isDirectory(outputDir)) throw new MojoFailureException("Output directory must be a directory");
         return outputDir;
     }
 
     public static Path toStaticDirectory(final MavenProject project) throws MojoFailureException {
         final Path outputDir = Paths.get(project.getBuild().getOutputDirectory()).resolve("wwwroot");
         outputDir.toFile().mkdirs();
-        if (!exists(outputDir))
+        if (!Files.exists(outputDir))
             throw new MojoFailureException("Output directory must exist: " + outputDir);
-        if (!isDirectory(outputDir))
+        if (!Files.isDirectory(outputDir))
             throw new MojoFailureException("Output directory must be a directory");
         return outputDir;
     }

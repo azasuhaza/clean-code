@@ -4,7 +4,7 @@ import htmlcompiler.utils.Logger;
 
 import java.io.FileNotFoundException;
 
-import static htmlcompiler.utils.IO.findBinaryInPath;
+import htmlcompiler.utils.IO;
 
 public enum Dependencies {;
 
@@ -17,7 +17,7 @@ public enum Dependencies {;
 
     private static void testExistenceBinary(final Logger log, final String name, final String binary) {
         try {
-            findBinaryInPath(binary);
+        	IO.findBinaryInPath(binary);
         } catch (final FileNotFoundException e) {
             log.warn("Unable to find the " + name + ". Binary name is " + binary);
         }

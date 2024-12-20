@@ -5,12 +5,12 @@ import org.w3c.dom.Element;
 
 import java.nio.file.Path;
 
-import static htmlcompiler.compilers.CodeCompiler.newNopCompiler;
+import htmlcompiler.compilers.CodeCompiler;
 import static htmlcompiler.compilers.JsCompiler.*;
 
 public enum ScriptType {
-    minified_javascript(newNopCompiler()),
-    javascript(newNopCompiler()),
+    minified_javascript(CodeCompiler.newNopCompiler()),
+    javascript(CodeCompiler.newNopCompiler()),
     typescript(newTypescriptCompiler()),
     jspp(newJsppCompiler()),
     dart(newDartCompiler());

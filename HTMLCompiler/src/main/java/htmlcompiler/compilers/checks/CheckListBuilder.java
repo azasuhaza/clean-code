@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static java.lang.Boolean.TRUE;
+import java.lang.Boolean;
 
 public final class CheckListBuilder {
 
@@ -30,7 +30,7 @@ public final class CheckListBuilder {
     }
 
     public CheckListBuilder addIfEnabled(final String name, final ElementChecks.JsoupElementCheck check) {
-        if (config.checks.getOrDefault(name, TRUE)) list.add(check);
+        if (config.checks.getOrDefault(name, Boolean.TRUE)) list.add(check);
         return this;
     }
 
