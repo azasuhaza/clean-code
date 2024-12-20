@@ -23,7 +23,7 @@ import java.util.regex.Pattern;
 import htmlcompiler.utils.Filenames;
 import static htmlcompiler.utils.Json.GSON;
 import static java.nio.file.Files.*;
-import java.nio.file.StandardOpenOption.CREATE;
+import java.nio.file.StandardOpenOption;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import xmlparser.utils.Functions;
