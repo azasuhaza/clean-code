@@ -1,5 +1,6 @@
 package htmlcompiler.minify;
 
+import com.google.javascript.jscomp.CompilationLevel;
 import com.googlecode.htmlcompressor.compressor.ClosureJavaScriptCompressor;
 import com.yahoo.platform.yui.compressor.JavaScriptCompressor;
 import htmlcompiler.utils.Logger;
@@ -12,7 +13,6 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 
-import static com.google.javascript.jscomp.CompilationLevel.*;
 
 public enum JsMinifyEngine {
 
@@ -30,15 +30,15 @@ public enum JsMinifyEngine {
     }
 
     public static String compressJsWithGccSimple(final String code) {
-        final var compress = new ClosureJavaScriptCompressor(SIMPLE_OPTIMIZATIONS);
+        final var compress = new ClosureJavaScriptCompressor(CompilationLevel.SIMPLE_OPTIMIZATIONS);
         return compress.compress(code);
     }
     public static String compressJsWithGccWhitespace(final String code) {
-        final var compress = new ClosureJavaScriptCompressor(WHITESPACE_ONLY);
+        final var compress = new ClosureJavaScriptCompressor(CompilationLevel.WHITESPACE_ONLY);
         return compress.compress(code);
     }
     public static String compressJsWithGccBundle(final String code) {
-        final var compress = new ClosureJavaScriptCompressor(BUNDLE);
+        final var compress = new ClosureJavaScriptCompressor(CompilationLevel.BUNDLE);
         return compress.compress(code);
     }
     public static String compressJsWithGccAdvanced(final String code) {
