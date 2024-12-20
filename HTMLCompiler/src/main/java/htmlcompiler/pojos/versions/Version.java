@@ -1,6 +1,6 @@
 package htmlcompiler.pojos.versions;
 
-import static xmlparser.utils.Functions.isNullOrEmpty;
+import xmlparser.utils.Functions;
 
 public final class Version {
     public final int major;
@@ -18,7 +18,7 @@ public final class Version {
         this.patch = version.length > 2 ? parseInt(version[2], -1) : -1;
     }
     private static int parseInt(final String value, final int defaultValue) {
-        if (isNullOrEmpty(value)) return defaultValue;
+        if (Functions.isNullOrEmpty(value)) return defaultValue;
         try {
             return Integer.parseInt(value);
         } catch (NumberFormatException e) {

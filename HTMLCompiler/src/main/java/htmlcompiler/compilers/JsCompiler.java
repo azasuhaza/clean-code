@@ -12,22 +12,22 @@ import java.io.StringReader;
 import java.io.StringWriter;
 
 import static com.google.javascript.jscomp.CompilationLevel.*;
-import static htmlcompiler.compilers.CodeCompiler.newExternalToolCompiler;
+import htmlcompiler.compilers.CodeCompiler;
 
 public enum JsCompiler {;
 
     public static CodeCompiler newTypescriptCompiler() {
-        return newExternalToolCompiler("tsc", ".tsc",
+        return CodeCompiler.newExternalToolCompiler("tsc", ".tsc",
             (outputFile, inputFile) -> "--outFile " + outputFile.toAbsolutePath() + " " + inputFile.toAbsolutePath());
     }
 
     public static CodeCompiler newJsppCompiler() {
-        return newExternalToolCompiler("js++", ".jspp",
+        return CodeCompiler.newExternalToolCompiler("js++", ".jspp",
             (outputFile, inputFile) -> inputFile.toAbsolutePath() + " -o " + outputFile.toAbsolutePath());
     }
 
     public static CodeCompiler newDartCompiler() {
-        return newExternalToolCompiler("dart2js", ".dart",
+        return CodeCompiler.newExternalToolCompiler("dart2js", ".dart",
             (outputFile, inputFile) -> "-o " + outputFile.toAbsolutePath() + " " + inputFile.toAbsolutePath());
     }
 

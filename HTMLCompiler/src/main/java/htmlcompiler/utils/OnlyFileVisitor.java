@@ -6,16 +6,16 @@ import java.nio.file.FileVisitor;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
 
-import static java.nio.file.FileVisitResult.CONTINUE;
+import java.nio.file.FileVisitResult;
 
 public interface OnlyFileVisitor extends FileVisitor<Path> {
     default FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-        return CONTINUE;
+        return FileVisitResult.CONTINUE;
     }
     default FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
-        return CONTINUE;
+        return FileVisitResult.CONTINUE;
     }
     default FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
-        return CONTINUE;
+        return FileVisitResult.CONTINUE;
     }
 }

@@ -7,8 +7,8 @@ import org.jsoup.nodes.Element;
 import java.io.File;
 import java.nio.file.Path;
 
-import static htmlcompiler.utils.Filenames.toRelativePath;
-import static xmlparser.utils.Functions.isNullOrEmpty;
+import htmlcompiler.utils.Filenames;
+import xmlparser.utils.Functions;
 
 public enum DocumentChecks {;
 
@@ -21,7 +21,7 @@ public enum DocumentChecks {;
             if ("stylesheet".equals(link.attr("rel")) && "print".equals(link.attr("media")))
                 return;
         }
-        log.warn("File " + toRelativePath(file) + " does not have a stylesheet for print media");
+        log.warn("File " + Filenames.toRelativePath(file) + " does not have a stylesheet for print media");
     }
 
     public static void hasSeoMetaTags(final Logger log, final Path file, final Document document) {
@@ -35,62 +35,62 @@ public enum DocumentChecks {;
         boolean hasOpenGraphUrl = false;
 
         for (final var meta : document.select("meta")) {
-            if ("robots".equalsIgnoreCase(meta.attr("name")) && !isNullOrEmpty(meta.attr("content"))) {
+            if ("robots".equalsIgnoreCase(meta.attr("name")) && !Functions.isNullOrEmpty(meta.attr("content"))) {
                 hasRobots = true;
                 continue;
             }
-            if ("description".equalsIgnoreCase(meta.attr("name")) && !isNullOrEmpty(meta.attr("content"))) {
+            if ("description".equalsIgnoreCase(meta.attr("name")) && !Functions.isNullOrEmpty(meta.attr("content"))) {
                 hasDescription = true;
                 continue;
             }
-            if ("og:description".equalsIgnoreCase(meta.attr("name")) && !isNullOrEmpty(meta.attr("content"))) {
+            if ("og:description".equalsIgnoreCase(meta.attr("name")) && !Functions.isNullOrEmpty(meta.attr("content"))) {
                 hasOpenGraphDescription = true;
                 continue;
             }
-            if ("og:image".equalsIgnoreCase(meta.attr("name")) && !isNullOrEmpty(meta.attr("content"))) {
+            if ("og:image".equalsIgnoreCase(meta.attr("name")) && !Functions.isNullOrEmpty(meta.attr("content"))) {
                 hasOpenGraphImage = true;
                 continue;
             }
-            if ("og:title".equalsIgnoreCase(meta.attr("name")) && !isNullOrEmpty(meta.attr("content"))) {
+            if ("og:title".equalsIgnoreCase(meta.attr("name")) && !Functions.isNullOrEmpty(meta.attr("content"))) {
                 hasOpenGraphTitle = true;
                 continue;
             }
-            if ("og:type".equalsIgnoreCase(meta.attr("name")) && !isNullOrEmpty(meta.attr("content"))) {
+            if ("og:type".equalsIgnoreCase(meta.attr("name")) && !Functions.isNullOrEmpty(meta.attr("content"))) {
                 hasOpenGraphType = true;
                 continue;
             }
-            if ("og:url".equalsIgnoreCase(meta.attr("name")) && !isNullOrEmpty(meta.attr("content"))) {
+            if ("og:url".equalsIgnoreCase(meta.attr("name")) && !Functions.isNullOrEmpty(meta.attr("content"))) {
                 hasOpenGraphUrl = true;
                 continue;
             }
         }
 
         if (!hasDescription)
-            log.warn("File " + toRelativePath(file) + " doesn't have a description meta tag");
+            log.warn("File " + Filenames.toRelativePath(file) + " doesn't have a description meta tag");
         if (!hasRobots)
-            log.warn("File " + toRelativePath(file) + " doesn't have a robots meta tag. Consider; index, follow, noindex, nofollow, noimageindex, noarchive, nosnippet, notranslate");
+            log.warn("File " + Filenames.toRelativePath(file) + " doesn't have a robots meta tag. Consider; index, follow, noindex, nofollow, noimageindex, noarchive, nosnippet, notranslate");
         if (!hasOpenGraphDescription)
-            log.warn("File " + toRelativePath(file) + " doesn't have an og:description meta tag");
+            log.warn("File " + Filenames.toRelativePath(file) + " doesn't have an og:description meta tag");
         if (!hasOpenGraphImage)
-            log.warn("File " + toRelativePath(file) + " doesn't have an og:image meta tag");
+            log.warn("File " + Filenames.toRelativePath(file) + " doesn't have an og:image meta tag");
         if (!hasOpenGraphTitle)
-            log.warn("File " + toRelativePath(file) + " doesn't have an og:title meta tag");
+            log.warn("File " + Filenames.toRelativePath(file) + " doesn't have an og:title meta tag");
         if (!hasOpenGraphType)
-            log.warn("File " + toRelativePath(file) + " doesn't have an og:type meta tag");
+            log.warn("File " + Filenames.toRelativePath(file) + " doesn't have an og:type meta tag");
         if (!hasOpenGraphUrl)
-            log.warn("File " + toRelativePath(file) + " doesn't have an og:url meta tag");
+            log.warn("File " + Filenames.toRelativePath(file) + " doesn't have an og:url meta tag");
 
     }
 
     public static void hasViewportMetaTag(final Logger log, final Path file, final Document document) {
         final Element element = document.selectFirst("meta[name=viewport]");
-        if (element == null || isNullOrEmpty(element.attr("content")))
-            log.warn("File " + toRelativePath(file) + " doesn't have a viewport meta tag");
+        if (element == null || Functions.isNullOrEmpty(element.attr("content")))
+            log.warn("File " + Filenames.toRelativePath(file) + " doesn't have a viewport meta tag");
     }
 
     public static void hasTitleTag(final Logger log, final Path file, final Document document) {
         if (document.selectFirst("title") == null)
-            log.warn("File " + toRelativePath(file) + " doesn't have a title tag");
+            log.warn("File " + Filenames.toRelativePath(file) + " doesn't have a title tag");
     }
 
 }

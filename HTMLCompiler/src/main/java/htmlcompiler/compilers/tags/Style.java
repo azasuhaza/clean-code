@@ -8,7 +8,7 @@ import org.jsoup.nodes.Element;
 
 import java.nio.file.Path;
 
-import static htmlcompiler.compilers.tags.TagParsing.*;
+import static htmlcompiler.compilers.tags.TagAnalyzer.*;
 import static htmlcompiler.pojos.compile.StyleType.css;
 import static htmlcompiler.pojos.compile.StyleType.detectStyleType;
 import static htmlcompiler.utils.IO.toLocation;

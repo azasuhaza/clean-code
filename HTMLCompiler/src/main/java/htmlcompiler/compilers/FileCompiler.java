@@ -11,7 +11,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
 
-import static htmlcompiler.compilers.CodeCompiler.newNopCompiler;
+import htmlcompiler.compilers.CodeCompiler;
 import static htmlcompiler.compilers.CssCompiler.*;
 import static htmlcompiler.compilers.JsCompiler.*;
 import static htmlcompiler.compilers.TemplateEngines.*;
@@ -56,10 +56,10 @@ public interface FileCompiler {
             , entry(".htm", newHtmlCompiler(html, Files::readString))
             , entry(".html", newHtmlCompiler(html, Files::readString))
             , entry(".hct", newHtmlCompiler(html, Files::readString))
-            , entry(".css", newScriptCompiler(logger, CssMinifyEngine::minifyCssWithYui, newNopCompiler(), ".min.css"))
+            , entry(".css", newScriptCompiler(logger, CssMinifyEngine::minifyCssWithYui, CodeCompiler.newNopCompiler(), ".min.css"))
             , entry(".scss", newScriptCompiler(logger, CssMinifyEngine::minifyCssWithYui, newScssCompiler(logger), ".min.css"))
             , entry(".stylus", newScriptCompiler(logger, CssMinifyEngine::minifyCssWithYui, newStylusCompiler(), ".min.css"))
-            , entry(".js", newScriptCompiler(logger, html.jsMinifier, newNopCompiler(), ".min.js"))
+            , entry(".js", newScriptCompiler(logger, html.jsMinifier, CodeCompiler.newNopCompiler(), ".min.js"))
             , entry(".jspp", newScriptCompiler(logger, html.jsMinifier, newJsppCompiler(), ".min.js"))
             , entry(".js++", newScriptCompiler(logger, html.jsMinifier, newJsppCompiler(), ".min.js"))
             , entry(".dart", newScriptCompiler(logger, html.jsMinifier, newDartCompiler(), ".min.js"))

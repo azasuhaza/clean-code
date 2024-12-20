@@ -5,8 +5,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import static htmlcompiler.utils.IO.findBinaryInPath;
-import static htmlcompiler.utils.IO.newTempFileWithContent;
+import htmlcompiler.utils.IO;
 
 public interface CodeCompiler {
 
@@ -34,11 +33,11 @@ public interface CodeCompiler {
     }
     public static CodeCompiler newExternalToolCompiler(final String toolName, final String scriptExtension
             , final boolean deleteFirst, final String tempFileExtension, final CompileArgumentsSupplier supplier) {
-        final Path toolLocation = findBinaryInPath(toolName, null);
+        final Path toolLocation = IO.findBinaryInPath(toolName, null);
 
         return new CodeCompiler() {
             public String compileCode(String code, Path owner) throws IOException {
-                final Path tempFile = newTempFileWithContent("hc_in_", scriptExtension, owner.getParent(), code);
+                final Path tempFile = IO.newTempFileWithContent("hc_in_", scriptExtension, owner.getParent(), code);
                 try {
                     return compileCode(tempFile);
                 } finally {

@@ -7,15 +7,14 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import static htmlcompiler.utils.Coding.encodeHex;
-import static htmlcompiler.utils.Coding.sha256;
-import static java.lang.System.currentTimeMillis;
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static java.nio.file.Files.isRegularFile;
-import static java.nio.file.LinkOption.NOFOLLOW_LINKS;
-import static java.nio.file.StandardOpenOption.CREATE;
-import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
-import static java.util.concurrent.TimeUnit.DAYS;
+import htmlcompiler.utils.Coding;
+import htmlcompiler.utils.Coding;
+import java.lang.System;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.LinkOption;
+import java.nio.file.StandardOpenOption;
+import java.util.concurrent.TimeUnit;
 
 public enum RepositoryJsCode {;
 
@@ -23,14 +22,14 @@ public enum RepositoryJsCode {;
         if (!enabled) return minifier.minify(code);
 
         try {
-            final String key = encodeHex(sha256(code, UTF_8));
+            final String key = Coding.encodeHex(Coding.sha256(code, StandardCharsets.UTF_8));
             final Path path = toFilePath(type.name(), key);
-            if (isRegularFile(path) && !isOlderThanOneDay(path)) {
-                return Files.readString(path, UTF_8);
+            if (Files.isRegularFile(path) && !isOlderThanOneDay(path)) {
+                return Files.readString(path, StandardCharsets.UTF_8);
             } else {
                 final String compressedCode = minifier.minify(code);
                 Files.createDirectories(path.getParent());
-                Files.writeString(path, compressedCode, UTF_8, CREATE, TRUNCATE_EXISTING);
+                Files.writeString(path, compressedCode, StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
                 return compressedCode;
             }
         } catch (final IOException e) {
@@ -39,9 +38,9 @@ public enum RepositoryJsCode {;
         }
     }
 
-    private static final long ONE_DAY = DAYS.toMillis(1);
+    private static final long ONE_DAY = TimeUnit.DAYS.toMillis(1);
     private static boolean isOlderThanOneDay(final Path path) throws IOException {
-        return ONE_DAY < currentTimeMillis() - Files.getLastModifiedTime(path, NOFOLLOW_LINKS).toMillis();
+        return ONE_DAY < System.currentTimeMillis() - Files.getLastModifiedTime(path, LinkOption.NOFOLLOW_LINKS).toMillis();
     }
 
     private static Path toFilePath(final String type, final String key) throws IOException {

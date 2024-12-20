@@ -15,7 +15,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 
-import static htmlcompiler.compilers.tags.TagParsing.*;
+import static htmlcompiler.compilers.tags.TagAnalyzer.*;
 import static htmlcompiler.pojos.compile.ImageType.toMimeType;
 import static htmlcompiler.pojos.compile.StyleType.css;
 import static htmlcompiler.pojos.compile.StyleType.detectStyleType;

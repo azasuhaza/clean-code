@@ -13,9 +13,9 @@ import java.util.Map;
 import java.util.Set;
 
 import static htmlcompiler.utils.Json.GSON;
-import static htmlcompiler.utils.Strings.isNullOrBlank;
-import static java.nio.file.Files.isRegularFile;
-import static java.nio.file.Files.newBufferedReader;
+import htmlcompiler.utils.Strings;
+import java.nio.file.Files;
+import java.nio.file.Files;
 
 public final class CompilerConfig {
 
@@ -43,11 +43,11 @@ public final class CompilerConfig {
 
     private static final Type CONFIG_MAP_TYPE = new TypeToken<Map<String, CompilerConfig>>() {}.getType();
     public static Map<String, CompilerConfig> readChecksConfiguration(final String confLocation) throws IOException {
-        if (isNullOrBlank(confLocation)) return Map.of("", new CompilerConfig());
+        if (Strings.isNullOrBlank(confLocation)) return Map.of("", new CompilerConfig());
         final Path confFile = Paths.get(confLocation);
-        if (!isRegularFile(confFile)) return Map.of("", new CompilerConfig());
+        if (!Files.isRegularFile(confFile)) return Map.of("", new CompilerConfig());
 
-        try (final Reader in = newBufferedReader(confFile)) {
+        try (final Reader in = Files.newBufferedReader(confFile)) {
             return GSON.fromJson(in, CONFIG_MAP_TYPE);
         }
     }

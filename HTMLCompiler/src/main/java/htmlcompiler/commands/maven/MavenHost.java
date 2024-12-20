@@ -10,7 +10,7 @@ import org.apache.maven.project.MavenProject;
 
 import java.nio.file.Path;
 
-import static htmlcompiler.utils.App.buildMavenTask;
+import htmlcompiler.utils.App;
 
 @Mojo( name = "host" )
 public final class MavenHost extends AbstractMojo {
@@ -35,7 +35,7 @@ public final class MavenHost extends AbstractMojo {
 
     @Override
     public void execute() throws MojoFailureException {
-        buildMavenTask(this, log -> Host.executeHost(log, newHostConfig()));
+        App.buildMavenTask(this, log -> Host.executeHost(log, newHostConfig()));
     }
 
     private HostCommandConfig newHostConfig() throws MojoFailureException {

@@ -16,7 +16,7 @@ import static htmlcompiler.services.RepositoryHashes.uriToIntegrityValue;
 import static htmlcompiler.utils.Coding.encodeBase64;
 import static htmlcompiler.utils.HTTP.isUrl;
 
-public enum TagParsing {;
+public enum TagAnalyzer {;
 
     public static void copyAttributes(final Element from, final Element to) {
         for (final Attribute attribute : from.attributes()) {

@@ -13,7 +13,6 @@ import java.io.StringReader;
 import java.io.StringWriter;
 
 import static com.google.javascript.jscomp.CompilationLevel.*;
-import static com.google.javascript.jscomp.CompilationLevel.ADVANCED_OPTIMIZATIONS;
 
 public enum JsMinifyEngine {
 
@@ -43,7 +42,7 @@ public enum JsMinifyEngine {
         return compress.compress(code);
     }
     public static String compressJsWithGccAdvanced(final String code) {
-        final var compress = new ClosureJavaScriptCompressor(ADVANCED_OPTIMIZATIONS);
+        final var compress = new ClosureJavaScriptCompressor(CompilationLevel.ADVANCED_OPTIMIZATIONS);
         return compress.compress(code);
     }
 

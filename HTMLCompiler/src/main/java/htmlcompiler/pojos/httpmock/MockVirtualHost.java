@@ -7,23 +7,23 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.emptyList;
+import java.util.Arrays;
+import java.util.Collections;
 
 public final class MockVirtualHost {
 
     public static List<Header> redirectHeader(final String path) {
-        return asList(new Header("Location", path));
+        return Arrays.asList(new Header("Location", path));
     }
     public static List<Header> newRecordsHeader(final int count) {
-        return asList(new Header("Number-Of-Records", String.valueOf(count)));
+        return Arrays.asList(new Header("Number-Of-Records", String.valueOf(count)));
     }
     public static final List<Header>
-        NO_HEADERS = emptyList(),
-        JSON_CONTENT = asList(new Header("Content-Type", "application/json")),
-        TEXT_CONTENT = asList(new Header("Content-Type", "text/plain; charset=UTF-8")),
-        IMAGE_JPEG = asList(new Header("Content-Type", "image/jpeg")),
-        TEXT_CSS = asList(new Header("Content-Type", "text/css; charset=UTF-8"));
+        NO_HEADERS = Collections.emptyList(),
+        JSON_CONTENT = Arrays.asList(new Header("Content-Type", "application/json")),
+        TEXT_CONTENT = Arrays.asList(new Header("Content-Type", "text/plain; charset=UTF-8")),
+        IMAGE_JPEG = Arrays.asList(new Header("Content-Type", "image/jpeg")),
+        TEXT_CSS = Arrays.asList(new Header("Content-Type", "text/css; charset=UTF-8"));
 
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
     private final List<Request> requests = new ArrayList<>();

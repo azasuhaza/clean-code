@@ -7,9 +7,9 @@ import org.jsoup.nodes.Element;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import static htmlcompiler.compilers.tags.TagParsing.*;
-import static htmlcompiler.compilers.tags.TagParsing.copyAttributes;
-import static htmlcompiler.compilers.tags.TagParsing.makeAbsolutePath;
+import static htmlcompiler.compilers.tags.TagAnalyzer.*;
+import static htmlcompiler.compilers.tags.TagAnalyzer.copyAttributes;
+import static htmlcompiler.compilers.tags.TagAnalyzer.makeAbsolutePath;
 import static htmlcompiler.pojos.compile.ImageType.isBinaryImage;
 import static htmlcompiler.utils.IO.toLocation;
 

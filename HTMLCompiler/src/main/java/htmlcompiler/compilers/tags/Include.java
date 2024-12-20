@@ -8,7 +8,7 @@ import org.jsoup.nodes.Node;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import static htmlcompiler.compilers.tags.TagParsing.replaceWith;
+import static htmlcompiler.compilers.tags.TagAnalyzer.replaceWith;
 import static htmlcompiler.utils.IO.toLocation;
 
 public enum Include {;

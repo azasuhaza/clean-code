@@ -24,21 +24,21 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static htmlcompiler.compilers.checks.CheckListBuilder.newJsoupCheckList;
-import static htmlcompiler.compilers.tags.Body.newBodyVisitor;
-import static htmlcompiler.compilers.tags.Head.newHeadVisitor;
-import static htmlcompiler.compilers.tags.Image.newImageVisitor;
-import static htmlcompiler.compilers.tags.Import.newImportVisitor;
-import static htmlcompiler.compilers.tags.Include.newIncludeVisitor;
-import static htmlcompiler.compilers.tags.Library.newLibraryVisitor;
-import static htmlcompiler.compilers.tags.Link.newLinkVisitor;
-import static htmlcompiler.compilers.tags.Meta.newMetaVisitor;
-import static htmlcompiler.compilers.tags.Script.newScriptVisitor;
-import static htmlcompiler.compilers.tags.Style.newStyleVisitor;
-import static htmlcompiler.compilers.tags.TagVisitor.NOOP;
-import static htmlcompiler.services.RepositoryJsCode.cached;
-import static htmlcompiler.utils.Filenames.toRelativePath;
-import static xmlparser.utils.Functions.isNullOrEmpty;
+import htmlcompiler.compilers.checks.CheckListBuilder;
+import htmlcompiler.compilers.tags.Body;
+import htmlcompiler.compilers.tags.Head;
+import htmlcompiler.compilers.tags.Image;
+import htmlcompiler.compilers.tags.Import;
+import htmlcompiler.compilers.tags.Include;
+import htmlcompiler.compilers.tags.Library;
+import htmlcompiler.compilers.tags.Link;
+import htmlcompiler.compilers.tags.Meta;
+import htmlcompiler.compilers.tags.Script;
+import htmlcompiler.compilers.tags.Style;
+import htmlcompiler.compilers.tags.TagVisitor;
+import htmlcompiler.services.RepositoryJsCode;
+import htmlcompiler.utils.Filenames;
+import xmlparser.utils.Functions;
 
 public final class HtmlCompiler {
 
@@ -85,17 +85,17 @@ public final class HtmlCompiler {
             , final LibraryArchive archive) {
         final ScriptBag scripts = new ScriptBag();
         final Map<String, TagVisitor> processors = new HashMap<>();
-        processors.put("style", newStyleVisitor(log, html));
-        processors.put("link", newLinkVisitor(log, html));
-        processors.put("img", newImageVisitor(html));
-        processors.put("script", newScriptVisitor(log, html, scripts));
+        processors.put("style", Style.newStyleVisitor(log, html));
+        processors.put("link", Link.newLinkVisitor(log, html));
+        processors.put("img", Image.newImageVisitor(html));
+        processors.put("script", Script.newScriptVisitor(log, html, scripts));
         if (html.deprecatedTagsEnabled) {
-            processors.put("body", newBodyVisitor(scripts));
-            processors.put("head", newHeadVisitor(scripts));
-            processors.put("import", newImportVisitor(html));
-            processors.put("include", newIncludeVisitor(html));
-            processors.put("library", newLibraryVisitor(archive));
-            processors.put("meta", newMetaVisitor(archive));
+            processors.put("body", Body.newBodyVisitor(scripts));
+            processors.put("head", Head.newHeadVisitor(scripts));
+            processors.put("import", Import.newImportVisitor(html));
+            processors.put("include", Include.newIncludeVisitor(html));
+            processors.put("library", Library.newLibraryVisitor(archive));
+            processors.put("meta", Meta.newMetaVisitor(archive));
         }
         return processors;
     }
@@ -112,7 +112,7 @@ public final class HtmlCompiler {
     }
     public String compressJs(final String code) {
         if (!compressionEnabled || !jsCompressionEnabled) return code;
-        return cached(cachedJsCompression, jsMinifyEngine, code, jsMinifier);
+        return RepositoryJsCode.cached(cachedJsCompression, jsMinifyEngine, code, jsMinifier);
     }
 
     public String compileHtmlCode(final Path file, final String content) throws InvalidInput {
@@ -133,7 +133,7 @@ public final class HtmlCompiler {
             public void head(final Node node, final int depth) {
                 if (node instanceof final Element elem) {
                     try {
-                        processors.getOrDefault(node.nodeName(), NOOP).head(config, file, elem, depth);
+                        processors.getOrDefault(node.nodeName(), TagVisitor.NOOP).head(config, file, elem, depth);
                     } catch (final Exception e) {
                         errors.add(e);
                     }
@@ -142,7 +142,7 @@ public final class HtmlCompiler {
             public void tail(final Node node, final int depth) {
                 if (node instanceof final Element elem) {
                     try {
-                        processors.getOrDefault(node.nodeName(), NOOP).tail(config, file, elem, depth);
+                        processors.getOrDefault(node.nodeName(), TagVisitor.NOOP).tail(config, file, elem, depth);
                     } catch (final Exception e) {
                         errors.add(e);
                     }
@@ -153,7 +153,7 @@ public final class HtmlCompiler {
 
         linkCounts.forEach((link, count) -> {
             if (count.getValue() > 1)
-                log.warn("File " + toRelativePath(file) + " contains " + count.getValue() + " entries to " + toRelativePath(link));
+                log.warn("File " + Filenames.toRelativePath(file) + " contains " + count.getValue() + " entries to " + Filenames.toRelativePath(link));
         });
         cssUtils.forEach((util, count) -> {
             if (count.getValue() > 1)
@@ -161,21 +161,21 @@ public final class HtmlCompiler {
         });
 
         if (checksEnabled) {
-            final var checks = newJsoupCheckList(config).addAllEnabled().build();
+            final var checks = CheckListBuilder.newJsoupCheckList(config).addAllEnabled().build();
             element.traverse(new NodeVisitor() {
                 public void head(final Node node, final int depth) {
                     if (node instanceof final Element element) {
                         for (final var check : checks) check.checkElement(log, config, file, element);
                         for (final var siblings : config.validator.siblingAttributes.entrySet()) {
-                            if (!isNullOrEmpty(element.attr(siblings.getKey())) && isNullOrEmpty(element.attr(siblings.getValue())))
-                                log.warn("File " + toRelativePath(file) + " has a tag '" + element.tagName() + "' with an attribute '" + siblings.getKey() + "' but not '" + siblings.getValue() + "'");
+                            if (!Functions.isNullOrEmpty(element.attr(siblings.getKey())) && Functions.isNullOrEmpty(element.attr(siblings.getValue())))
+                                log.warn("File " + Filenames.toRelativePath(file) + " has a tag '" + element.tagName() + "' with an attribute '" + siblings.getKey() + "' but not '" + siblings.getValue() + "'");
                         }
                     }
                     if (node instanceof TextNode) {
                         final var element = (Element) node.parent();
                         for (final String attribute : config.validator.textNodeParentsHaveAttributes) {
-                            if (isNullOrEmpty(element.attr(attribute)))
-                                log.warn("File " + toRelativePath(file) + " contains a text node '" + ((TextNode) node).text() + "' with missing parent attribute '" + attribute + "'");
+                            if (Functions.isNullOrEmpty(element.attr(attribute)))
+                                log.warn("File " + Filenames.toRelativePath(file) + " contains a text node '" + ((TextNode) node).text() + "' with missing parent attribute '" + attribute + "'");
                         }
                     }
                 }

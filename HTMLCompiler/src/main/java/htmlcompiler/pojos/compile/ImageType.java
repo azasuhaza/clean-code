@@ -2,7 +2,7 @@ package htmlcompiler.pojos.compile;
 
 import java.nio.file.Path;
 
-import static htmlcompiler.utils.Filenames.toExtension;
+import htmlcompiler.utils.Filenames;
 
 public enum ImageType {
     bmp("image/bmp"),
@@ -35,7 +35,7 @@ public enum ImageType {
 
     public static boolean isBinaryImage(final String filename) {
         try {
-            ImageType.valueOf(toExtension(filename));
+            ImageType.valueOf(Filenames.toExtension(filename));
             return true;
         }catch (Exception e) {
             return false;
@@ -45,10 +45,10 @@ public enum ImageType {
         return isBinaryImage(file.getFileName().toString());
     }
     public static String toMimeType(final String filename) {
-        return ImageType.valueOf(toExtension(filename)).mimetype;
+        return ImageType.valueOf(Filenames.toExtension(filename)).mimetype;
     }
     public static String toMimeType(final Path filename) {
-        return ImageType.valueOf(toExtension(filename)).mimetype;
+        return ImageType.valueOf(Filenames.toExtension(filename)).mimetype;
     }
 
 }

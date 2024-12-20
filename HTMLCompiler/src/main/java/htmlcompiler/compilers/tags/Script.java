@@ -12,7 +12,7 @@ import org.jsoup.nodes.Element;
 
 import java.nio.file.Path;
 
-import static htmlcompiler.compilers.tags.TagParsing.*;
+import static htmlcompiler.compilers.tags.TagAnalyzer.*;
 import static htmlcompiler.pojos.compile.MoveType.storeCode;
 import static htmlcompiler.pojos.compile.MoveType.toMoveType;
 import static htmlcompiler.pojos.compile.ScriptType.detectScriptType;
