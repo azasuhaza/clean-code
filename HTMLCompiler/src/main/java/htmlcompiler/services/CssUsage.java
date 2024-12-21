@@ -1,7 +1,6 @@
 package htmlcompiler.services;
 
 import htmlcompiler.utils.Logger;
-
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -14,7 +13,6 @@ public enum CssUsage {;
 
     public static void addCssClasses(final Path path, final String css) {
         final Set<String> classes = cssClasses.computeIfAbsent(path, path1 -> new HashSet<>());
-//        classes.addAll(extractCssClasses(css));
     }
 
     public static void checkClassesUsed(final Logger logger, final Path path, final String htmlContent) {

@@ -31,7 +31,6 @@ public enum HTML {;
         "path", "lineargradient", "stop", "g", "defs", "rect", "circle", "fecolormatrix", "fegaussianblur",
         "feoffset", "filter", "radialgradient", "center", "marquee", "blink", "frame", "frameset");
 
-    // https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes
     public static final Set<String> known_attributes = Set.of("accept", "accept-charset", "accesskey",
         "action", "align", "allow", "alt", "async", "autocapitalize", "autocomplete", "autofocus",
         "autoplay", "background", "bgcolor", "buffered", "challenge", "charset", "checked", "cite",
@@ -57,16 +56,10 @@ public enum HTML {;
         "pointer-events", "stroke", "stroke-miterlimit", "stroke-width", "visibility", "allowfullscreen",
         "frameborder", "fill-opacity", "nonce");
 
-    // https://uzzal.wordpress.com/2009/10/08/fobidden-deprecated-html-tags-and-attributes/
-    // https://www.tutorialspoint.com/html5/html5_deprecated_tags.htm
-    public static final Set<String> deprecated_tags = Set.of("acronym", "applet", "basefont", "big", "center"
+    public static final Set<String> older_deprecated_tags = Set.of("acronym", "applet", "basefont", "big", "center"
             , "dir", "embed", "font", "frame", "frameset", "isindex", "noframes", "menu", "noembed", "s", "strike", "tt", "u");
 
-    // http://www.w3.org/TR/html4/index/elements.html
-    // http://www.w3.org/TR/html4/index/attributes.html
-    // https://uzzal.wordpress.com/2009/10/08/fobidden-deprecated-html-tags-and-attributes/
-    // https://www.tutorialspoint.com/html5/html5_deprecated_tags.htm
-    public static final Map<String, Set<String>> deprecated_attributes = ofEntries
+    public static final Map<String, Set<String>> older_deprecated_attributes = ofEntries
         ( entry("abbr", Set.of("td", "t"))
         , entry("align", Set.of("caption", "iframe", "img", "input", "legend", "object", "table", "hr", "div", "h1"
         , "h2", "h3", "h4", "h5", "h6", "p", "col", "colgroup", "tbody", "td", "tfoot", "th", "thead", "tr"))
@@ -125,8 +118,6 @@ public enum HTML {;
             , "onbeforeunload", "onerror", "onhashchange", "onload", "onmessage", "onoffline", "ononline"
             , "onpagehide", "onpageshow", "onpopstate", "onresize", "onstorage", "onunload");
 
-    // https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input
-    // https://www.w3schools.com/html/html_form_input_types.asp
     public static final Set<String> known_input_types = Set.of("button", "checkbox", "color", "date",
             "datetime-local", "email", "file", "hidden", "image", "month", "number", "password", "radio",
             "range", "reset", "search", "submit", "tel", "text", "time", "url", "week", "datetime");
