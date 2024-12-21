@@ -21,8 +21,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import htmlcompiler.utils.Filenames;
-import static htmlcompiler.utils.Json.GSON;
-import static java.nio.file.Files.*;
+import htmlcompiler.utils.Json;
 import java.nio.file.StandardOpenOption;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -86,11 +85,11 @@ public enum RepositoryVersions {;
 
     private static List<Version> listVersions(final String library) throws IOException, InterruptedException {
         final Path cache = getVersionRepositoryPath().resolve(library + ".json");
-        if (isCachedVersionFile(cache)) return GSON.fromJson(readString(cache), TYPE_LIST_VERSIONS);
+        if (isCachedVersionFile(cache)) return Json.GSON.fromJson(Files.readString(cache), TYPE_LIST_VERSIONS);
 
         final var list = downloadListVersions(library);
-        createDirectories(cache.getParent());
-        writeString(cache, GSON.toJson(list), StandardOpenOption.CREATE);
+        Files.createDirectories(cache.getParent());
+        Files.writeString(cache, Json.GSON.toJson(list), StandardOpenOption.CREATE);
         return list;
     }
 
@@ -99,7 +98,7 @@ public enum RepositoryVersions {;
     }
 
     private static boolean isCachedVersionFile(final Path file) throws IOException {
-        return isRegularFile(file) && Files.getLastModifiedTime(file).toMillis() > oneWeekAgo();
+        return Files.isRegularFile(file) && Files.getLastModifiedTime(file).toMillis() > oneWeekAgo();
     }
 
     private static long oneWeekAgo() {
@@ -112,7 +111,7 @@ public enum RepositoryVersions {;
                 .uri(URI.create(String.format(URI_CDN_JS_VERSIONS, library)))
                 .build();
         final var response = HTTP.HTTP.send(request, HttpResponse.BodyHandlers.ofString());
-        return GSON.fromJson(response.body(), CdnJsResponse.class).versions
+        return Json.GSON.fromJson(response.body(), CdnJsResponse.class).versions
                 .stream().map(Version::new).collect(Collectors.toList());
     }
 

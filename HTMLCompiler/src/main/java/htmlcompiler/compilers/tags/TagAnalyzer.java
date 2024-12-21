@@ -11,10 +11,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.NoSuchAlgorithmException;
 
-import static htmlcompiler.pojos.compile.ImageType.toMimeType;
-import static htmlcompiler.services.RepositoryHashes.uriToIntegrityValue;
-import static htmlcompiler.utils.Coding.encodeBase64;
-import static htmlcompiler.utils.HTTP.isUrl;
+import htmlcompiler.pojos.compile.ImageType;
+import htmlcompiler.services.RepositoryHashes;
+import htmlcompiler.utils.Coding;
+import htmlcompiler.utils.HTTP;
 
 public enum TagAnalyzer {;
 
@@ -44,19 +44,19 @@ public enum TagAnalyzer {;
     }
 
     public static String toDataUrl(final Path location) throws IOException {
-        return toDataUrl(toMimeType(location), location);
+        return toDataUrl(ImageType.toMimeType(location), location);
     }
     public static String toDataUrl(final String type, final Path location) throws IOException {
         return toDataUrl(type, Files.readAllBytes(location));
     }
     public static String toDataUrl(final String type, final byte[] data) {
-        return "data:"+type+";base64,"+encodeBase64(data);
+        return "data:"+type+";base64,"+ Coding.encodeBase64(data);
     }
 
 
     public static void makeAbsolutePath(final Element element, final String attribute) {
         final String path = element.attr(attribute);
-        if (path != null && !isUrl(path)) {
+        if (path != null && !HTTP.isUrl(path)) {
             element.attr(attribute, "/"+path);
             element.removeAttr("to-absolute");
         }
@@ -65,9 +65,9 @@ public enum TagAnalyzer {;
     public static void addIntegrityAttributes(final Element element, final String url
             , final Logger log) throws IOException, NoSuchAlgorithmException {
         try {
-            if (isUrl(url)) {
+            if (HTTP.isUrl(url)) {
                 final boolean force = element.hasAttr("force-integrity");
-                element.attr("integrity", uriToIntegrityValue(url, force, log));
+                element.attr("integrity", RepositoryHashes.uriToIntegrityValue(url, force, log));
                 if (force) element.removeAttr("force-integrity");
                 if (!element.hasAttr("crossorigin"))
                     element.attr("crossorigin", "anonymous");

@@ -11,10 +11,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
 
-import htmlcompiler.compilers.CodeCompiler;
-import static htmlcompiler.compilers.CssCompiler.*;
-import static htmlcompiler.compilers.JsCompiler.*;
-import static htmlcompiler.compilers.TemplateEngines.*;
 import static java.util.Map.entry;
 
 public interface FileCompiler {
@@ -22,7 +18,7 @@ public interface FileCompiler {
     String compile(Path file) throws IOException, InvalidTemplate, InvalidInput;
     String outputExtension();
 
-    private static FileCompiler newHtmlCompiler(final HtmlCompiler html, final HtmlTemplateEngine engine) {
+    private static FileCompiler newHtmlCompiler(final HtmlCompiler html, final TemplateEngines.HtmlTemplateEngine engine) {
         return new FileCompiler() {
             public String compile(final Path file) throws IOException, InvalidTemplate, InvalidInput {
                 return html.doctypeCompressCompile(file, engine.compile(file));
@@ -50,20 +46,20 @@ public interface FileCompiler {
     public static Map<String, FileCompiler> newFileCompilerMap(final Logger logger, final HtmlCompiler html,
                                                                final Map<String, String> context) {
         return Map.ofEntries
-            ( entry(".pebble", newHtmlCompiler(html, newPebbleEngine(context)))
-            , entry(".jade", newHtmlCompiler(html, newJade4jEngine(context)))
-            , entry(".pug", newHtmlCompiler(html, newPug4jEngine(context)))
+            ( entry(".pebble", newHtmlCompiler(html, TemplateEngines.newPebbleEngine(context)))
+            , entry(".jade", newHtmlCompiler(html, TemplateEngines.newJade4jEngine(context)))
+            , entry(".pug", newHtmlCompiler(html, TemplateEngines.newPug4jEngine(context)))
             , entry(".htm", newHtmlCompiler(html, Files::readString))
             , entry(".html", newHtmlCompiler(html, Files::readString))
             , entry(".hct", newHtmlCompiler(html, Files::readString))
             , entry(".css", newScriptCompiler(logger, CssMinifyEngine::minifyCssWithYui, CodeCompiler.newNopCompiler(), ".min.css"))
-            , entry(".scss", newScriptCompiler(logger, CssMinifyEngine::minifyCssWithYui, newScssCompiler(logger), ".min.css"))
-            , entry(".stylus", newScriptCompiler(logger, CssMinifyEngine::minifyCssWithYui, newStylusCompiler(), ".min.css"))
+            , entry(".scss", newScriptCompiler(logger, CssMinifyEngine::minifyCssWithYui, CssCompiler.newScssCompiler(logger), ".min.css"))
+            , entry(".stylus", newScriptCompiler(logger, CssMinifyEngine::minifyCssWithYui, CssCompiler.newStylusCompiler(), ".min.css"))
             , entry(".js", newScriptCompiler(logger, html.jsMinifier, CodeCompiler.newNopCompiler(), ".min.js"))
-            , entry(".jspp", newScriptCompiler(logger, html.jsMinifier, newJsppCompiler(), ".min.js"))
-            , entry(".js++", newScriptCompiler(logger, html.jsMinifier, newJsppCompiler(), ".min.js"))
-            , entry(".dart", newScriptCompiler(logger, html.jsMinifier, newDartCompiler(), ".min.js"))
-            , entry(".ts", newScriptCompiler(logger, html.jsMinifier, newTypescriptCompiler(), ".min.js"))
+            , entry(".jspp", newScriptCompiler(logger, html.jsMinifier, JsCompiler.newJsppCompiler(), ".min.js"))
+            , entry(".js++", newScriptCompiler(logger, html.jsMinifier, JsCompiler.newJsppCompiler(), ".min.js"))
+            , entry(".dart", newScriptCompiler(logger, html.jsMinifier, JsCompiler.newDartCompiler(), ".min.js"))
+            , entry(".ts", newScriptCompiler(logger, html.jsMinifier, JsCompiler.newTypescriptCompiler(), ".min.js"))
             );
     }
 

@@ -5,16 +5,12 @@ import com.vaadin.sass.internal.ScssStylesheet;
 import com.vaadin.sass.internal.handler.SCSSDocumentHandler;
 import com.vaadin.sass.internal.handler.SCSSDocumentHandlerImpl;
 import com.vaadin.sass.internal.parser.Parser;
-import com.yahoo.platform.yui.compressor.CssCompressor;
 import htmlcompiler.utils.Logger;
 import org.w3c.css.sac.InputSource;
 
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
-
-import htmlcompiler.compilers.CodeCompiler;
-import htmlcompiler.utils.Logger;
 
 public enum CssCompiler {;
 

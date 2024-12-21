@@ -3,20 +3,16 @@ package htmlcompiler.pojos.compile;
 import htmlcompiler.compilers.CodeCompiler;
 import htmlcompiler.utils.Logger;
 import org.w3c.dom.Element;
-
 import java.nio.file.Path;
-
-import htmlcompiler.compilers.CodeCompiler;
-import static htmlcompiler.compilers.CssCompiler.*;
-import htmlcompiler.utils.Logger;
+import htmlcompiler.compilers.CssCompiler;
 
 public enum StyleType {
     minified_css(CodeCompiler.newNopCompiler()),
     css(CodeCompiler.newNopCompiler()),
-    less(newLessCompiler()),
+    less(CssCompiler.newLessCompiler()),
     // FIXME should use the maven logger somehow
-    scss(newScssCompiler(Logger.newConsoleLogger())),
-    stylus(newStylusCompiler());
+    scss(CssCompiler.newScssCompiler(Logger.newConsoleLogger())),
+    stylus(CssCompiler.newStylusCompiler());
 
     private final CodeCompiler compiler;
     StyleType(final CodeCompiler compiler) {

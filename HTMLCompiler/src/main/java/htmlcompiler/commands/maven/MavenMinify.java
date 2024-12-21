@@ -18,7 +18,7 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 import htmlcompiler.utils.App;
-import static java.nio.file.Files.*;
+import java.nio.file.Files.*;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 
 @Mojo(defaultPhase = LifecyclePhase.PREPARE_PACKAGE, name = "minify")
@@ -62,7 +62,7 @@ public final class MavenMinify extends AbstractMojo {
 
             if (files != null) for (final var file : files) {
                 final var path = outputDir.resolve(file);
-                if (!isRegularFile(path)) {
+                if (!Files.isRegularFile(path)) {
                     log.warn("File " + file + " could not be found");
                     continue;
                 }
@@ -96,7 +96,7 @@ public final class MavenMinify extends AbstractMojo {
 
     private static void tryMinify(final Logger log, final Path file, final Minifier minifier) {
         try {
-            writeString(file, minifier.minify(readString(file)));
+        	Files.writeString(file, minifier.minify(Files.readString(file)));
         } catch (final Exception e) {
             log.error("Failed to minify file " + file + ". " + e.getMessage());
         }

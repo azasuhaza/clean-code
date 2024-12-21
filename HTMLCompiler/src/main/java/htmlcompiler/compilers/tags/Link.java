@@ -15,48 +15,44 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 
-import static htmlcompiler.compilers.tags.TagAnalyzer.*;
-import static htmlcompiler.pojos.compile.ImageType.toMimeType;
-import static htmlcompiler.pojos.compile.StyleType.css;
-import static htmlcompiler.pojos.compile.StyleType.detectStyleType;
-import static htmlcompiler.services.RepositoryVersions.checkVersionLibrary;
-import static htmlcompiler.utils.IO.loadResource;
-import static htmlcompiler.utils.IO.toLocation;
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static java.nio.file.Files.readAllBytes;
-import static xmlparser.utils.Functions.isNullOrEmpty;
+import htmlcompiler.pojos.compile.ImageType;
+import htmlcompiler.services.RepositoryVersions;
+import htmlcompiler.utils.IO;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import xmlparser.utils.Functions;
 
 public enum Link {;
 
     public static TagVisitor newLinkVisitor(final Logger log, final HtmlCompiler html) {
         return (TailVisitor) (config, file, node, depth) -> {
-            if (isLinkFavicon(node) && node.hasAttr("inline")) {
+            if (TagAnalyzer.isLinkFavicon(node) && node.hasAttr("inline")) {
                 inlineFavicon(node, file);
                 return;
             }
 
             if (isCssUtil(node)) {
                 final String cssUtilNames = node.attr("href");
-                if (isNullOrEmpty(cssUtilNames)) throw new InvalidInput("Found CSS-util import without href attribute");
+                if (Functions.isNullOrEmpty(cssUtilNames)) throw new InvalidInput("Found CSS-util import without href attribute");
 
                 final StringBuilder css = new StringBuilder();
                 for (final String cssUtilName : cssUtilNames.split("[ ,]")) {
-                    if (isNullOrEmpty(cssUtilName)) continue;
+                    if (Functions.isNullOrEmpty(cssUtilName)) continue;
 
                     html.cssUtils.computeIfAbsent(cssUtilName, s -> new MutableInteger()).increment();
                     css.append(loadCssUtil(cssUtilName));
                 }
 
                 final Element style = node.ownerDocument().createElement("style");
-                setData(style, html.compressCss(css.toString()));
+                TagAnalyzer.setData(style, html.compressCss(css.toString()));
 
-                final Element previousSibling = previousElementSibling(node);
-                if (isInlineStyle(previousSibling) && !isStyleEmpty(previousSibling)) {
-                    setData(style, previousSibling.data() + style.data());
+                final Element previousSibling = TagAnalyzer.previousElementSibling(node);
+                if (TagAnalyzer.isInlineStyle(previousSibling) && !TagAnalyzer.isStyleEmpty(previousSibling)) {
+                	TagAnalyzer.setData(style, previousSibling.data() + style.data());
                     previousSibling.attr("htmlcompiler", "delete-me");
                 }
 
-                replaceWith(node, style);
+                TagAnalyzer.replaceWith(node, style);
                 return;
             }
 
@@ -65,30 +61,30 @@ public enum Link {;
                 node.attr("type", "text/css");
             }
 
-            if (isLinkStyleSheet(node) && node.hasAttr("href"))
-                checkVersionLibrary(log, file.toString(), node.attr("href"), config.ignoreMajorVersions);
+            if (TagAnalyzer.isLinkStyleSheet(node) && node.hasAttr("href"))
+            	RepositoryVersions.checkVersionLibrary(log, file.toString(), node.attr("href"), config.ignoreMajorVersions);
 
-            if (isLinkStyleSheet(node) && node.hasAttr("inline")) {
-                final Path location = toLocation(file, node.attr("href"), "<link> in %s has an invalid href location '%s'");
+            if (TagAnalyzer.isLinkStyleSheet(node) && node.hasAttr("inline")) {
+                final Path location = IO.toLocation(file, node.attr("href"), "<link> in %s has an invalid href location '%s'");
                 html.linkCounts.computeIfAbsent(location.toAbsolutePath().toString(), s -> new MutableInteger()).increment();
                 final Element style = inlineStylesheet(log, html, node, location, node.ownerDocument());
 
-                final Element previousSibling = previousElementSibling(node);
-                if (isInlineStyle(previousSibling) && !isStyleEmpty(previousSibling)) {
-                    setData(style, previousSibling.data() + style.data());
+                final Element previousSibling = TagAnalyzer.previousElementSibling(node);
+                if (TagAnalyzer.isInlineStyle(previousSibling) && !TagAnalyzer.isStyleEmpty(previousSibling)) {
+                	TagAnalyzer.setData(style, previousSibling.data() + style.data());
                     previousSibling.attr("htmlcompiler", "delete-me");
                 }
 
-                replaceWith(node, style);
+                TagAnalyzer.replaceWith(node, style);
                 return;
             }
             if (!node.hasAttr("integrity") && !node.hasAttr("no-integrity")) {
-                addIntegrityAttributes(node, node.attr("href"), log);
+            	TagAnalyzer.addIntegrityAttributes(node, node.attr("href"), log);
             }
             if (node.hasAttr("to-absolute")) {
-                makeAbsolutePath(node, "href");
+            	TagAnalyzer.makeAbsolutePath(node, "href");
             }
-            removeAttributes(node, "to-absolute", "no-integrity");
+            TagAnalyzer.removeAttributes(node, "to-absolute", "no-integrity");
         };
     }
 
@@ -113,10 +109,10 @@ public enum Link {;
     }
 
     private static void inlineFavicon(final Node element, final Path file) throws InvalidInput, IOException {
-        final Path location = toLocation(file, element.attr("href"), "<link> in %s has an invalid href location '%s'");
-        final String type = (element.hasAttr("type")) ? element.attr("type") : toMimeType(location);
+        final Path location = IO.toLocation(file, element.attr("href"), "<link> in %s has an invalid href location '%s'");
+        final String type = (element.hasAttr("type")) ? element.attr("type") : ImageType.toMimeType(location);
         element.removeAttr("inline");
-        element.attr("href", toDataUrl(type, readAllBytes(file)));
+        element.attr("href", TagAnalyzer.toDataUrl(type, Files.readAllBytes(file)));
     }
 
     private static boolean isCssUtil(final Element node) {
@@ -124,7 +120,7 @@ public enum Link {;
     }
     private static String loadCssUtil(final String cssUtilName) throws InvalidInput {
         try {
-            return loadResource("/htmlcompiler/css-utils/" + cssUtilName + ".css", UTF_8);
+            return IO.loadResource("/htmlcompiler/css-utils/" + cssUtilName + ".css", StandardCharsets.UTF_8);
         } catch (final IOException e) {
             throw new InvalidInput("CSS util " + cssUtilName + " does not exist", e);
         }
@@ -133,14 +129,14 @@ public enum Link {;
     private static Element inlineStylesheet(final Logger log, final HtmlCompiler html, final Element element,
                                             final Path location, final Document document) throws Exception {
         final Element style = document.createElement("style");
-        final StyleType type = detectStyleType(element, css);
-        setData(style, type.compile(location));
+        final StyleType type = StyleType.detectStyleType(element, StyleType.css);
+        TagAnalyzer.setData(style, type.compile(location));
 
         if (element.hasAttr("compress"))
-            setData(style, html.compressCss(style.data()));
+        	TagAnalyzer.setData(style, html.compressCss(style.data()));
 
-        removeAttributes(element, "href", "rel", "inline", "compress");
-        copyAttributes(element, style);
+        TagAnalyzer.removeAttributes(element, "href", "rel", "inline", "compress");
+        TagAnalyzer.copyAttributes(element, style);
         return style;
     }
 

@@ -1,10 +1,14 @@
 package htmlcompiler.services;
 
 import java.io.IOException;
-import java.nio.file.*;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardWatchEventKinds;
+import java.nio.file.WatchEvent;
+import java.nio.file.WatchKey;
+import java.nio.file.WatchService;
 import java.util.*;
-
-import static java.nio.file.StandardWatchEventKinds.*;
 
 public final class DirectoryWatcher {
 
@@ -62,11 +66,11 @@ public final class DirectoryWatcher {
             if (dir == null) return;
 
             for (final var event : key.pollEvents()) {
-                if (event.kind().equals(OVERFLOW)) break;
+                if (event.kind().equals(StandardWatchEventKinds.OVERFLOW)) break;
 
                 final var pathEvent = (WatchEvent<Path>) event;
                 final var entryPath = dir.resolve(pathEvent.context());
-                if (pathEvent.kind() == ENTRY_CREATE && entryPath.toFile().isDirectory())
+                if (pathEvent.kind() == StandardWatchEventKinds.ENTRY_CREATE && entryPath.toFile().isDirectory())
                     watchDirectory(entryPath, watchService, watchKeyToDirectory);
                 listener.onEvent(pathEvent.kind(), entryPath);
             }
@@ -82,14 +86,14 @@ public final class DirectoryWatcher {
 
     private static void watchDirectory(final Path dir, final WatchService watchService, final Map<WatchKey, Path> watchKeyToDirectory) {
         try {
-            watchKeyToDirectory.put(dir.register(watchService, ENTRY_CREATE, ENTRY_MODIFY, ENTRY_DELETE), dir);
+            watchKeyToDirectory.put(dir.register(watchService, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_MODIFY, StandardWatchEventKinds.ENTRY_DELETE), dir);
         } catch (IOException ioe) {
             System.err.println("Not watching '"+dir+"'.");
         }
     }
 
     private static Path notifyCreateEvent(final boolean enabled, final Path dir, final PathEventListener listener) {
-        if (enabled) listener.onEvent(ENTRY_CREATE, dir);
+        if (enabled) listener.onEvent(StandardWatchEventKinds.ENTRY_CREATE, dir);
         return dir;
     }
 }

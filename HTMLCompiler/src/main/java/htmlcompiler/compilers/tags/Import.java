@@ -8,8 +8,7 @@ import org.jsoup.nodes.Node;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import static htmlcompiler.compilers.tags.TagAnalyzer.replaceWith;
-import static htmlcompiler.utils.IO.toLocation;
+import htmlcompiler.utils.IO;
 
 public enum Import {;
 
@@ -18,13 +17,13 @@ public enum Import {;
             final Path include = toSourceLocation(node, "src", file);
             final String content = Files.readString(include);
             if (content.isEmpty()) node.remove();
-            else replaceWith(node, compiler.compileHtmlFragment(include, content).children());
+            else TagAnalyzer.replaceWith(node, compiler.compileHtmlFragment(include, content).children());
         };
     }
 
     private static Path toSourceLocation(final Node node, final String attribute, final Path file) throws InvalidInput {
         if (!node.hasAttr(attribute)) throw new InvalidInput(String.format("<import> is missing '%s' attribute", attribute));
-        return toLocation(file.getParent(), node.attr(attribute), "<import> in %s has an invalid src location '%s'");
+        return IO.toLocation(file.getParent(), node.attr(attribute), "<import> in %s has an invalid src location '%s'");
     }
 
 }

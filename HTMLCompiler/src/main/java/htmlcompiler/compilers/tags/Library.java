@@ -7,14 +7,13 @@ import htmlcompiler.pojos.library.LibraryArchive;
 import htmlcompiler.pojos.library.LibraryDescription;
 import org.jsoup.nodes.Element;
 
-import static htmlcompiler.compilers.tags.TagAnalyzer.replaceWith;
-import static xmlparser.utils.Functions.isNullOrEmpty;
+import xmlparser.utils.Functions;
 
 public enum Library {;
 
     public static TagVisitor newLibraryVisitor(final LibraryArchive archive) {
         return (TailVisitor) (config, file, node, depth) -> {
-            replaceWith(node, createTag(node, archive));
+        	TagAnalyzer.replaceWith(node, createTag(node, archive));
         };
     }
 
@@ -22,7 +21,7 @@ public enum Library {;
         final String name = element.attr("name");
         final String version = element.attr("version");
         final String type = element.attr("type");
-        if (isNullOrEmpty(name) || isNullOrEmpty(version) || isNullOrEmpty(type)) {
+        if (Functions.isNullOrEmpty(name) || Functions.isNullOrEmpty(version) || Functions.isNullOrEmpty(type)) {
             throw new InvalidInput(String.format("Invalid library tag: name=%s, version=%s, type=%s", name, version, type));
         }
 
