@@ -1,19 +1,5 @@
 package htmlcompiler.compilers;
 
-import com.googlecode.htmlcompressor.compressor.ClosureJavaScriptCompressor;
-import com.yahoo.platform.yui.compressor.JavaScriptCompressor;
-import htmlcompiler.minify.Minifier;
-import htmlcompiler.utils.Logger;
-import org.mozilla.javascript.ErrorReporter;
-import org.mozilla.javascript.EvaluatorException;
-
-import java.io.IOException;
-import java.io.StringReader;
-import java.io.StringWriter;
-
-import static com.google.javascript.jscomp.CompilationLevel.*;
-import htmlcompiler.compilers.CodeCompiler;
-
 public enum JsCompiler {;
 
     public static CodeCompiler newTypescriptCompiler() {

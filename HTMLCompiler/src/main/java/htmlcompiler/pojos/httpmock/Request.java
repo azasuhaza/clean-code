@@ -7,7 +7,6 @@ import htmlcompiler.services.HttpHandlers;
 import java.nio.file.Path;
 import java.util.List;
 
-import static htmlcompiler.services.HttpHandlers.*;
 import java.nio.charset.StandardCharsets;
 
 public final class Request {
@@ -30,12 +29,12 @@ public final class Request {
             if (location == null) return HttpHandlers::send404;
             return exchange -> {
                 for (final Path dir : directories) {
-                    final var file = toFile(dir, location.value, null);
+                    final var file = HttpHandlers.toFile(dir, location.value, null);
                     if (file == null) continue;
-                    sendFile(exchange, file);
+                    HttpHandlers.sendFile(exchange, file);
                     return;
                 }
-                send404(exchange);
+                HttpHandlers.send404(exchange);
             };
         } else return exchange -> {
             final Headers responseHeaders = exchange.getResponseHeaders();

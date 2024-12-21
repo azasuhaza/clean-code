@@ -10,18 +10,14 @@ import java.nio.file.Paths;
 import java.util.Optional;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
-
-import static java.lang.String.format;
-import static java.nio.file.Files.createTempFile;
-import static java.nio.file.Files.isDirectory;
-import static java.nio.file.StandardOpenOption.CREATE;
-import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
+import java.lang.String;
+import java.nio.file.StandardOpenOption;
 
 public enum IO {;
 
     public static Path toLocation(final Path origin, final String link, final String message) throws InvalidInput {
-        final Path location = (isDirectory(origin) ? origin : origin.getParent()).resolve(link);
-        if (!Files.exists(location)) throw new InvalidInput(format(message, origin, link));
+        final Path location = (Files.isDirectory(origin) ? origin : origin.getParent()).resolve(link);
+        if (!Files.exists(location)) throw new InvalidInput(String.format(message, origin, link));
         return location;
     }
 
@@ -47,9 +43,9 @@ public enum IO {;
     }
 
     public static Path newTempFileWithContent(final String prefix, final String suffix, final Path tempDir, final String content) throws IOException {
-        final Path tempFile = createTempFile(tempDir, prefix, suffix);
+        final Path tempFile = Files.createTempFile(tempDir, prefix, suffix);
         try {
-            Files.writeString(tempFile, content, CREATE, TRUNCATE_EXISTING);
+            Files.writeString(tempFile, content, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
             return tempFile;
         } catch (IOException e) {
             Files.delete(tempFile);

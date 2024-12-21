@@ -1,10 +1,8 @@
 package htmlcompiler.utils;
 
 import com.googlecode.htmlcompressor.compressor.HtmlCompressor;
-
 import java.util.Map;
 import java.util.Set;
-
 import static java.util.Map.entry;
 import static java.util.Map.ofEntries;
 

@@ -8,9 +8,7 @@ import htmlcompiler.pojos.library.LibraryDescription;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
-import static htmlcompiler.compilers.tags.TagAnalyzer.*;
-import static htmlcompiler.compilers.tags.TagAnalyzer.replaceWith;
-import static xmlparser.utils.Functions.isNullOrEmpty;
+import xmlparser.utils.Functions;
 
 public enum Meta {;
 
@@ -18,7 +16,7 @@ public enum Meta {;
         return (TailVisitor) (config, file, node, depth) -> {
             final String name = node.attr("name");
             if ("library".equals(name)) {
-                replaceWith(node, createTag(node, archive));
+            	TagAnalyzer.replaceWith(node, createTag(node, archive));
             }
         };
     }
@@ -27,7 +25,7 @@ public enum Meta {;
         final String name = element.attr("content");
         final String version = element.attr("version");
         final String type = element.attr("type");
-        if (isNullOrEmpty(name) || isNullOrEmpty(version) || isNullOrEmpty(type)) {
+        if (Functions.isNullOrEmpty(name) || Functions.isNullOrEmpty(version) || Functions.isNullOrEmpty(type)) {
             throw new InvalidInput(String.format("Invalid library tag: name=%s, version=%s, type=%s", name, version, type));
         }
 

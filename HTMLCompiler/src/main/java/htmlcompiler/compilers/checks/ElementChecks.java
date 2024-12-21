@@ -3,12 +3,10 @@ package htmlcompiler.compilers.checks;
 import htmlcompiler.pojos.compile.CompilerConfig;
 import htmlcompiler.utils.Logger;
 import org.jsoup.nodes.Element;
-
 import java.nio.file.Path;
 import java.util.Set;
-
 import htmlcompiler.utils.Filenames;
-import static htmlcompiler.utils.HTML.*;
+import htmlcompiler.utils.HTML;
 import htmlcompiler.utils.Strings;
 import xmlparser.utils.Functions;
 
@@ -74,7 +72,7 @@ public enum ElementChecks {;
         final var type = element.attr("type");
         if (type == null || type.isEmpty()) return;
         if (config.ignoreInputTypes.contains(type)) return;
-        if (known_input_types.contains(type)) return;
+        if (HTML.known_input_types.contains(type)) return;
 
         log.warn("File " + Filenames.toRelativePath(file) + " contains an <input> tag with unknown type attribute '" + type + "'");
     }
@@ -139,13 +137,13 @@ public enum ElementChecks {;
     }
 
     public static void hasDeprecatedTag(final Logger log, final CompilerConfig config, final Path file, final Element element) {
-        if (deprecated_tags.contains(element.tagName()))
+        if (HTML.older_deprecated_tags.contains(element.tagName()))
             log.warn("File " + Filenames.toRelativePath(file) + " has a deprecated tag <" + element.tagName() + ">");
     }
 
     public static void hasDeprecatedAttribute(final Logger log, final CompilerConfig config, final Path file, final Element element) {
         for (final var attribute : element.attributes()) {
-            final Set<String> tags = deprecated_attributes.get(attribute.getKey());
+            final Set<String> tags = HTML.older_deprecated_attributes.get(attribute.getKey());
             if (tags != null && tags.contains(element.tagName())) {
                 log.warn("File " + Filenames.toRelativePath(file) + " has a deprecated attribute " + attribute.getKey() + " for tag <" + element.tagName() + ">");
             }
@@ -162,13 +160,11 @@ public enum ElementChecks {;
             log.warn("File " + Filenames.toRelativePath(file) + " has a <style> tag with a hardcoded nonce attribute");
     }
 
-    // Using label tag with for attribute: https://medium.com/@joelennon/common-html-mistakes-de28db16b964
     public static void labelWithForAttribute(final Logger log, final CompilerConfig config, final Path file, final Element element) {
         if ("label".equalsIgnoreCase(element.tagName()) && element.hasAttr("for"))
             log.warn("File " + Filenames.toRelativePath(file) + " has a <label> tag with a for attribute, use <label>Text<input></label>");
     }
 
-    // Warn on form elements without validation; https://html.spec.whatwg.org/multipage/forms.html#client-side-form-validation
     public static void inputWithoutMaxLength(final Logger log, final CompilerConfig config, final Path file, final Element element) {
         if ( "input".equalsIgnoreCase(element.tagName())
           && "text".equalsIgnoreCase(element.attr("type"))
@@ -179,7 +175,7 @@ public enum ElementChecks {;
 
     public static void hasEventHandlerAttribute(final Logger log, final CompilerConfig config, final Path file, final Element element) {
         for (final var attribute : element.attributes()) {
-            if (event_handler_attributes.contains(attribute.getKey().toLowerCase()))
+            if (HTML.event_handler_attributes.contains(attribute.getKey().toLowerCase()))
                 log.warn("File " + Filenames.toRelativePath(file) + " has a <" + element.tagName() + "> tag with an event handler attribute " + attribute.getKey());
         }
     }
@@ -187,7 +183,7 @@ public enum ElementChecks {;
     public static void isValidTag(final Logger log, final CompilerConfig config, final Path file, final Element element) {
         final String tagName = element.tagName().toLowerCase();
         if (config.ignoreTags.contains(tagName)) return;
-        if (!known_tags.contains(tagName))
+        if (!HTML.known_tags.contains(tagName))
             log.warn("File " + Filenames.toRelativePath(file) + " contains an unknown tag <" + element.tagName() + ">");
     }
 
@@ -195,7 +191,7 @@ public enum ElementChecks {;
         for (final var attribute : element.attributes()) {
             final String lowerAttr = attribute.getKey().toLowerCase();
             if (config.ignoreAttributes.contains(lowerAttr)) continue;
-            if (!known_attributes.contains(lowerAttr) && !lowerAttr.startsWith("data-"))
+            if (!HTML.known_attributes.contains(lowerAttr) && !lowerAttr.startsWith("data-"))
                 log.warn("File " + Filenames.toRelativePath(file) + " contains a tag <" + element.tagName() + "> with an unknown attribute " + attribute.getKey());
         }
     }

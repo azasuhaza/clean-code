@@ -10,13 +10,10 @@ import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 
-import htmlcompiler.services.Repository;
-import htmlcompiler.utils.Coding;
 import htmlcompiler.utils.Coding;
 import htmlcompiler.utils.HTTP;
-import htmlcompiler.utils.HTTP;
-import static htmlcompiler.utils.Json.GSON;
-import static java.nio.file.Files.*;
+import htmlcompiler.utils.Json;
+import java.nio.file.Files;
 
 public enum RepositoryHashes {;
 
@@ -46,15 +43,15 @@ public enum RepositoryHashes {;
 
     private static final Type MAP_TYPE = new TypeToken<Map<String, String>>() {}.getType();
     private static Map<String, String> readHashMap(final Path jsonFile) throws IOException {
-        if (!exists(jsonFile)) return new HashMap<>();
+        if (!Files.exists(jsonFile)) return new HashMap<>();
 
-        try (final var reader = newBufferedReader(jsonFile)) {
-            return GSON.fromJson(reader, MAP_TYPE);
+        try (final var reader = Files.newBufferedReader(jsonFile)) {
+            return Json.GSON.fromJson(reader, MAP_TYPE);
         }
     }
     private static void writeHashMap(final Map<String, String> map, final Path destination) throws IOException {
-        try (final var writer = newBufferedWriter(destination)) {
-            GSON.toJson(map, MAP_TYPE, GSON.newJsonWriter(writer));
+        try (final var writer = Files.newBufferedWriter(destination)) {
+        	Json.GSON.toJson(map, MAP_TYPE, Json.GSON.newJsonWriter(writer));
         }
     }
 

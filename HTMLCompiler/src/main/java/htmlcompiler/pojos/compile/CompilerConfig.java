@@ -12,9 +12,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import static htmlcompiler.utils.Json.GSON;
+import htmlcompiler.utils.Json;
 import htmlcompiler.utils.Strings;
-import java.nio.file.Files;
 import java.nio.file.Files;
 
 public final class CompilerConfig {
@@ -48,7 +47,7 @@ public final class CompilerConfig {
         if (!Files.isRegularFile(confFile)) return Map.of("", new CompilerConfig());
 
         try (final Reader in = Files.newBufferedReader(confFile)) {
-            return GSON.fromJson(in, CONFIG_MAP_TYPE);
+            return Json.GSON.fromJson(in, CONFIG_MAP_TYPE);
         }
     }
 

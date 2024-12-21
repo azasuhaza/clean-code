@@ -2,12 +2,9 @@ package htmlcompiler.services;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-
-import static java.nio.file.Files.*;
 
 public enum HttpHandlers {;
 
@@ -27,7 +24,7 @@ public enum HttpHandlers {;
     }
 
     public static void sendFile(final HttpExchange exchange, final Path file) throws IOException {
-        exchange.getResponseHeaders().add("Content-Type", addCharset(probeContentType(file)));
+        exchange.getResponseHeaders().add("Content-Type", addCharset(Files.probeContentType(file)));
         final long length = Files.size(file);
         if (length > 0) {
             exchange.sendResponseHeaders(200, length);
@@ -50,7 +47,7 @@ public enum HttpHandlers {;
 
     public static Path toFile(final Path dir, final String requestPath, final Path defaultValue) {
         final Path requested = dir.resolve(requestPath.substring(1));
-        return (!isChildOf(requested, dir) || !isRegularFile(requested) || !isReadable(requested)) ? defaultValue : requested;
+        return (!isChildOf(requested, dir) || !Files.isRegularFile(requested) || !Files.isReadable(requested)) ? defaultValue : requested;
     }
 
     private static boolean isChildOf(final Path child, final Path parent) {

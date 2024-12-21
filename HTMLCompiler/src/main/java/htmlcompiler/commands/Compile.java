@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Map;
 
-import static htmlcompiler.utils.Strings.isNullOrEmpty;
+import htmlcompiler.utils.Strings;
 
 public enum Compile {;
 
@@ -33,7 +33,7 @@ public enum Compile {;
         public boolean cacheJsCompression = true;
 
         public JsMinifyEngine getJsCompressorType() {
-            if (isNullOrEmpty(jsCompressorType)) return JsMinifyEngine.gcc_simple;
+            if (Strings.isNullOrEmpty(jsCompressorType)) return JsMinifyEngine.gcc_simple;
             return JsMinifyEngine.valueOf(jsCompressorType.replace('-', '_'));
         }
     }
